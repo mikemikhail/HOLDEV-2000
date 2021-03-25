@@ -1,0 +1,50 @@
+version: '3.6'
+services:
+  telegraf:
+    image: telegraf:1.17.2
+    restart: always
+    volumes:
+    - ./telegraf.conf:/etc/telegraf/telegraf.conf:ro
+    depends_on:
+      - influxdb
+    links:
+      - influxdb
+    ports:
+      - '50002:50002/tcp'
+      - '50001:50001/tcp'
+
+  influxdb:
+    image: influxdb:1.8.4
+    restart: always
+    env_file: configuration.env
+    ports:
+      - '8086:8086'
+    volumes:
+      - influxdb_storage:/var/lib/influxdb
+      - ./data:/data
+
+  grafana:
+    image: grafana/grafana:7.4.2
+    restart: always
+    depends_on:
+      - influxdb
+    env_file: configuration.env
+    links:
+      - influxdb
+    ports:
+      - '80:3000'
+    volumes:
+      - grafana_storage:/var/lib/grafana
+      - ./dashboards:/etc/dashboards
+      - ./grafana.ini:/etc/grafana/grafana.ini
+
+volumes:
+  grafana_storage: {}
+  influxdb_storage: {}
+
+networks:
+  default:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.19.0.0/16

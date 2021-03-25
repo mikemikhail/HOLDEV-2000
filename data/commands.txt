@@ -1,0 +1,2 @@
+docker exec -it tig_influxdb_1 bash
+influxd restore -portable -db mdt_db -newdb mdt_db_210321 /data/db_backup_210321/

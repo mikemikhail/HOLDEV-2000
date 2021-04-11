@@ -1,0 +1,39 @@
+
+netconf-yang
+
+telemetry ietf subscription 10
+ encoding encode-kvgpb
+ filter xpath /interfaces-ios-xe-oper:interfaces/interface/statistics
+ stream yang-push
+ update-policy periodic 3000
+ receiver ip address 198.18.134.28 50001 protocol grpc-tcp
+telemetry ietf subscription 502
+ encoding encode-kvgpb
+ filter xpath /process-cpu-ios-xe-oper:cpu-usage/cpu-utilization
+ stream yang-push
+ update-policy periodic 6000
+ receiver ip address 198.18.134.28 50001 protocol grpc-tcp
+telemetry ietf subscription 503
+ encoding encode-kvgpb
+ filter xpath /memory-ios-xe-oper:memory-statistics/memory-statistic
+ stream yang-push
+ update-policy periodic 6000
+ receiver ip address 198.18.134.28 50001 protocol grpc-tcp
+telemetry ietf subscription 504
+ encoding encode-kvgpb
+ filter xpath /interfaces-ios-xe-oper:interfaces/interface
+ stream yang-push
+ update-policy periodic 6000
+ receiver ip address 198.18.134.28 50001 protocol grpc-tcp
+telemetry ietf subscription 3313
+ encoding encode-kvgpb
+ filter xpath /oc-if:interfaces/interface/state/counters
+ stream yang-push
+ update-policy periodic 6000
+ receiver ip address 198.18.134.28 50001 protocol grpc-tcp
+telemetry ietf subscription 3315
+ encoding encode-kvgpb
+ filter xpath /if:interfaces-state
+ stream yang-push
+ update-policy periodic 6000
+ receiver ip address 198.18.134.28 50001 protocol grpc-tcp

@@ -21,7 +21,7 @@ def read_data(field_key, measurement_name, condition1, condition2, condition3, l
   global time_shift
   global initial_shift
   global previous_shift
-  if is_demo:
+  if is_replay:
       if time_shift==' - 0d ':
           initial_shift = datetime.now() - datetime(2021, 3, 10)
           shift = initial_shift

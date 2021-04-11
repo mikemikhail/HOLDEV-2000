@@ -1,0 +1,2448 @@
+lab:
+  description: Imported from telemetry.virl
+  notes: |-
+    ## Import Progress
+    - processing node /p102 (iosxrv)
+    - processing node /p103 (iosxrv)
+    - processing node /p104 (iosxrv)
+    - processing node /d113 (iosxrv9000)
+    - processing node /d114 (iosxrv9000)
+    - processing node /s123 (csr1000v)
+    - processing node /s124 (csr1000v)
+    - processing node /s134 (csr1000v)
+    - processing node /s112 (csr1000v)
+    - processing node /p101 (iosxrv)
+    - link GigabitEthernet0/0/0/1.p102 -> GigabitEthernet0/0/0/0.p103
+    - link GigabitEthernet0/0/0/1.p103 -> GigabitEthernet0/0/0/0.p104
+    - link GigabitEthernet2.s134 -> GigabitEthernet0/0/0/1.p104
+    - link GigabitEthernet3.s124 -> GigabitEthernet0/0/0/2.p102
+    - link GigabitEthernet0/0/0/1.d113 -> GigabitEthernet0/0/0/4.p103
+    - link GigabitEthernet3.s134 -> GigabitEthernet0/0/0/5.p103
+    - link GigabitEthernet0/0/0/2.p104 -> GigabitEthernet2.s124
+    - link GigabitEthernet3.s123 -> GigabitEthernet0/0/0/3.p102
+    - link GigabitEthernet0/0/0/5.p104 -> GigabitEthernet0/0/0/0.d114
+    - link GigabitEthernet2.s123 -> GigabitEthernet0/0/0/2.p103
+    - link GigabitEthernet0/0/0/0.p101 -> GigabitEthernet0/0/0/0.p102
+    - link GigabitEthernet0/0/0/1.d114 -> GigabitEthernet0/0/0/1.p101
+    - link GigabitEthernet0/0/0/0.d113 -> GigabitEthernet0/0/0/2.p101
+    - link GigabitEthernet0/0/0/4.p101 -> GigabitEthernet0/0/0/3.p104
+    - link GigabitEthernet3.s112 -> GigabitEthernet0/0/0/3.p101
+    - link GigabitEthernet2.s112 -> GigabitEthernet0/0/0/4.p102
+  timestamp: 1616802428.3279111
+  title: telemetry-lab.yaml
+  version: 0.0.4
+nodes:
+  - id: n0
+    label: p102
+    node_definition: iosxrv
+    x: 50
+    y: 200
+    configuration: |2-
+
+      Mon Mar 29 17:46:43.222 UTC
+      Building configuration...
+      !! IOS XR Configuration 6.6.3
+      !! Last configuration change at Mon Mar 29 17:46:39 2021 by cisco
+      !
+      !  IOS-XR Config generated on 2021-02-21 03:53
+      ! by autonetkit_0.24.1
+      hostname p102
+      logging console disable
+      service timestamps log datetime msec
+      service timestamps debug datetime msec
+      domain name virl.info
+      domain lookup disable
+      telnet vrf default ipv4 server max-servers 10
+      telnet vrf Mgmt-intf ipv4 server max-servers 10
+      cdp
+      vrf Mgmt-intf
+       address-family ipv4 unicast
+       !
+       address-family ipv6 unicast
+       !
+      !
+      line template vty
+       timestamp
+       exec-timeout 720 0
+      !
+      line console
+       exec-timeout 0 0
+       absolute-timeout 0
+       session-timeout 0
+      !
+      line default
+       exec-timeout 0 0
+       absolute-timeout 0
+       session-timeout 0
+      !
+      vty-pool default 0 9
+      alias exec up show ipv4 vrf all interface brief | include Up
+      alias exec tun show mpls traffic-eng tunnels tabular
+      alias exec topo show isis topology
+      ipv4 unnumbered mpls traffic-eng Loopback0
+      control-plane
+       management-plane
+        inband
+         interface all
+          allow all
+         !
+         interface Loopback0
+         !
+        !
+       !
+      !
+      interface Loopback0
+       description Loopback
+       ipv4 address 192.168.0.102 255.255.255.255
+      !
+      interface MgmtEth0/0/CPU0/0
+       description OOB Management
+       cdp
+       ! Configured on launch
+       vrf Mgmt-intf
+       ipv4 address 198.18.1.102 255.255.255.0
+      !
+      interface GigabitEthernet0/0/0/0
+       description to p101
+       cdp
+       ipv4 address 10.0.0.6 255.255.255.252
+      !
+      interface GigabitEthernet0/0/0/1
+       description to p103
+       cdp
+       ipv4 address 10.0.0.25 255.255.255.252
+      !
+      interface GigabitEthernet0/0/0/2
+       description to r124
+       cdp
+       ipv4 address 10.0.0.37 255.255.255.252
+      !
+      interface GigabitEthernet0/0/0/3
+       description to r123
+       cdp
+       ipv4 address 10.0.0.33 255.255.255.252
+      !
+      interface GigabitEthernet0/0/0/4
+       description to r112
+       cdp
+       ipv4 address 10.0.0.29 255.255.255.252
+      !
+      interface GigabitEthernet0/0/0/5
+       cdp
+       shutdown
+      !
+      router static
+       vrf Mgmt-intf
+        address-family ipv4 unicast
+         10.16.0.0/16 198.18.1.1
+         10.64.0.0/16 198.18.1.1
+         198.18.128.0/18 198.18.1.1
+        !
+       !
+      !
+      router isis ISIS
+       is-type level-2-only
+       net 49.0001.1921.6800.0102.00
+       address-family ipv4 unicast
+        metric-style wide
+        advertise passive-only
+        mpls traffic-eng level-2-only
+        mpls traffic-eng router-id Loopback0
+       !
+       interface Loopback0
+        passive
+        address-family ipv4 unicast
+        !
+       !
+       interface GigabitEthernet0/0/0/0
+        point-to-point
+        hello-padding disable
+        address-family ipv4 unicast
+         metric 100
+        !
+       !
+       interface GigabitEthernet0/0/0/1
+        point-to-point
+        hello-padding disable
+        address-family ipv4 unicast
+         metric 101
+        !
+       !
+       interface GigabitEthernet0/0/0/2
+        point-to-point
+        hello-padding disable
+        address-family ipv4 unicast
+         metric 1020
+        !
+       !
+       interface GigabitEthernet0/0/0/3
+        point-to-point
+        hello-padding disable
+        address-family ipv4 unicast
+         metric 1030
+        !
+       !
+       interface GigabitEthernet0/0/0/4
+        point-to-point
+        hello-padding disable
+        address-family ipv4 unicast
+         metric 1040
+        !
+       !
+      !
+      mpls oam
+      !
+      rsvp
+       interface GigabitEthernet0/0/0/0
+       !
+       interface GigabitEthernet0/0/0/1
+       !
+       interface GigabitEthernet0/0/0/2
+       !
+       interface GigabitEthernet0/0/0/3
+       !
+       interface GigabitEthernet0/0/0/4
+       !
+      !
+      mpls traffic-eng
+       interface GigabitEthernet0/0/0/0
+       !
+       interface GigabitEthernet0/0/0/1
+       !
+       interface GigabitEthernet0/0/0/2
+       !
+       interface GigabitEthernet0/0/0/3
+       !
+       interface GigabitEthernet0/0/0/4
+       !
+      !
+      netconf-yang agent
+       ssh
+      !
+      ssh server v2
+      ssh server vrf Mgmt-intf
+      end
+    image_definition: xrv-663
+    cpu_limit: 40
+    tags: []
+    interfaces:
+      - id: i0
+        slot: 0
+        label: MgmtEth0/0/CPU0/0
+        type: physical
+      - id: i1
+        slot: 1
+        label: GigabitEthernet0/0/0/0
+        type: physical
+      - id: i2
+        slot: 2
+        label: GigabitEthernet0/0/0/1
+        type: physical
+      - id: i3
+        slot: 3
+        label: GigabitEthernet0/0/0/2
+        type: physical
+      - id: i4
+        slot: 4
+        label: GigabitEthernet0/0/0/3
+        type: physical
+      - id: i5
+        slot: 5
+        label: GigabitEthernet0/0/0/4
+        type: physical
+      - id: i6
+        slot: 6
+        label: GigabitEthernet0/0/0/5
+        type: physical
+  - id: n1
+    label: p103
+    node_definition: iosxrv
+    x: 432
+    y: 194
+    configuration: |2-
+
+      Mon Mar 29 17:46:43.302 UTC
+      Building configuration...
+      !! IOS XR Configuration 6.6.3
+      !! Last configuration change at Mon Mar 29 17:46:39 2021 by cisco
+      !
+      ! by autonetkit_0.24.1
+      hostname p103
+      logging console disable
+      service timestamps log datetime msec
+      service timestamps debug datetime msec
+      domain name virl.info
+      domain lookup disable
+      telnet vrf default ipv4 server max-servers 10
+      telnet vrf Mgmt-intf ipv4 server max-servers 10
+      cdp
+      vrf Mgmt-intf
+       address-family ipv4 unicast
+       !
+      !
+      line template vty
+       timestamp
+       exec-timeout 720 0
+      !
+      line console
+       exec-timeout 0 0
+       absolute-timeout 0
+       session-timeout 0
+      !
+      line default
+       exec-timeout 0 0
+       absolute-timeout 0
+       session-timeout 0
+      !
+      vty-pool default 0 9
+      alias exec up show ipv4 vrf all interface brief | include Up
+      alias exec tun show mpls traffic-eng tunnels tabular
+      alias exec topo show isis topology
+      ipv4 unnumbered mpls traffic-eng Loopback0
+      control-plane
+       management-plane
+        inband
+         interface all
+          allow all
+         !
+         interface Loopback0
+         !
+        !
+       !
+      !
+      interface Loopback0
+       description Loopback
+       ipv4 address 192.168.0.103 255.255.255.255
+      !
+      interface MgmtEth0/0/CPU0/0
+       description OOB Management
+       cdp
+       ! Configured on launch
+       vrf Mgmt-intf
+       ipv4 address 198.18.1.103 255.255.255.0
+      !
+      interface GigabitEthernet0/0/0/0
+       description to p102
+       cdp
+       ipv4 address 10.0.0.26 255.255.255.252
+      !
+      interface GigabitEthernet0/0/0/1
+       description to p104
+       cdp
+       ipv4 address 10.0.0.41 255.255.255.252
+      !
+      interface GigabitEthernet0/0/0/2
+       description to r123
+       cdp
+       ipv4 address 10.0.0.49 255.255.255.252
+      !
+      interface GigabitEthernet0/0/0/3
+       description GigabitEthernet0/0/0/3
+       cdp
+       shutdown
+      !
+      interface GigabitEthernet0/0/0/4
+       description to r113
+       cdp
+       ipv4 address 10.0.0.45 255.255.255.252
+      !
+      interface GigabitEthernet0/0/0/5
+       description to r134
+       cdp
+       ipv4 address 10.0.0.53 255.255.255.252
+      !
+      router static
+       vrf Mgmt-intf
+        address-family ipv4 unicast
+         10.16.0.0/16 198.18.1.1
+         10.64.0.0/16 198.18.1.1
+         198.18.128.0/18 198.18.1.1
+        !
+       !
+      !
+      router isis ISIS
+       is-type level-2-only
+       net 49.0001.1921.6800.0103.00
+       address-family ipv4 unicast
+        metric-style wide
+        advertise passive-only
+        mpls traffic-eng level-2-only
+        mpls traffic-eng router-id Loopback0
+       !
+       interface Loopback0
+        passive
+        address-family ipv4 unicast
+        !
+       !
+       interface GigabitEthernet0/0/0/0
+        point-to-point
+        hello-padding disable
+        address-family ipv4 unicast
+         metric 100
+        !
+       !
+       interface GigabitEthernet0/0/0/1
+        point-to-point
+        hello-padding disable
+        address-family ipv4 unicast
+         metric 101
+        !
+       !
+       interface GigabitEthernet0/0/0/2
+        point-to-point
+        hello-padding disable
+        address-family ipv4 unicast
+         metric 1020
+        !
+       !
+       interface GigabitEthernet0/0/0/4
+        point-to-point
+        hello-padding disable
+        address-family ipv4 unicast
+         metric 1040
+        !
+       !
+       interface GigabitEthernet0/0/0/5
+        point-to-point
+        hello-padding disable
+        address-family ipv4 unicast
+         metric 1050
+        !
+       !
+      !
+      mpls oam
+      !
+      rsvp
+       interface GigabitEthernet0/0/0/0
+       !
+       interface GigabitEthernet0/0/0/1
+       !
+       interface GigabitEthernet0/0/0/2
+       !
+       interface GigabitEthernet0/0/0/4
+       !
+       interface GigabitEthernet0/0/0/5
+       !
+      !
+      mpls traffic-eng
+       interface GigabitEthernet0/0/0/0
+       !
+       interface GigabitEthernet0/0/0/1
+       !
+       interface GigabitEthernet0/0/0/2
+       !
+       interface GigabitEthernet0/0/0/4
+       !
+       interface GigabitEthernet0/0/0/5
+       !
+      !
+      netconf-yang agent
+       ssh
+      !
+      ssh server v2
+      ssh server vrf Mgmt-intf
+      end
+    image_definition: xrv-663
+    cpu_limit: 40
+    tags: []
+    interfaces:
+      - id: i0
+        slot: 0
+        label: MgmtEth0/0/CPU0/0
+        type: physical
+      - id: i1
+        slot: 1
+        label: GigabitEthernet0/0/0/0
+        type: physical
+      - id: i2
+        slot: 2
+        label: GigabitEthernet0/0/0/1
+        type: physical
+      - id: i3
+        slot: 3
+        label: GigabitEthernet0/0/0/2
+        type: physical
+      - id: i4
+        slot: 4
+        label: GigabitEthernet0/0/0/3
+        type: physical
+      - id: i5
+        slot: 5
+        label: GigabitEthernet0/0/0/4
+        type: physical
+      - id: i6
+        slot: 6
+        label: GigabitEthernet0/0/0/5
+        type: physical
+  - id: n2
+    label: p104
+    node_definition: iosxrv
+    x: 552
+    y: 134
+    configuration: |2-
+
+      Mon Mar 29 17:46:44.112 UTC
+      Building configuration...
+      !! IOS XR Configuration 6.6.3
+      !! Last configuration change at Mon Mar 29 17:46:40 2021 by cisco
+      !
+      !  IOS-XR Config generated on 2021-02-21 03:53
+      ! by autonetkit_0.24.1
+      hostname p104
+      logging console disable
+      service timestamps log datetime msec
+      service timestamps debug datetime msec
+      domain name virl.info
+      domain lookup disable
+      telnet vrf default ipv4 server max-servers 10
+      telnet vrf Mgmt-intf ipv4 server max-servers 10
+      cdp
+      vrf Mgmt-intf
+       address-family ipv4 unicast
+       !
+       address-family ipv6 unicast
+       !
+      !
+      line template vty
+       timestamp
+       exec-timeout 720 0
+      !
+      line console
+       exec-timeout 0 0
+       absolute-timeout 0
+       session-timeout 0
+      !
+      line default
+       exec-timeout 0 0
+       absolute-timeout 0
+       session-timeout 0
+      !
+      vty-pool default 0 9
+      alias exec up show ipv4 vrf all interface brief | include Up
+      alias exec tun show mpls traffic-eng tunnels tabular
+      alias exec topo show isis topology
+      ipv4 unnumbered mpls traffic-eng Loopback0
+      control-plane
+       management-plane
+        inband
+         interface all
+          allow all
+         !
+         interface Loopback0
+         !
+        !
+       !
+      !
+      interface Loopback0
+       description Loopback
+       ipv4 address 192.168.0.104 255.255.255.255
+      !
+      interface MgmtEth0/0/CPU0/0
+       description OOB Management
+       cdp
+       ! Configured on launch
+       vrf Mgmt-intf
+       ipv4 address 198.18.1.104 255.255.255.0
+      !
+      interface GigabitEthernet0/0/0/0
+       description to p103
+       cdp
+       ipv4 address 10.0.0.42 255.255.255.252
+      !
+      interface GigabitEthernet0/0/0/1
+       description to r134
+       cdp
+       ipv4 address 10.0.0.65 255.255.255.252
+      !
+      interface GigabitEthernet0/0/0/2
+       description to r124
+       cdp
+       ipv4 address 10.0.0.61 255.255.255.252
+      !
+      interface GigabitEthernet0/0/0/3
+       description to p101
+       cdp
+       ipv4 address 10.0.0.10 255.255.255.252
+      !
+      interface GigabitEthernet0/0/0/4
+       description GigabitEthernet0/0/0/4
+       cdp
+       shutdown
+      !
+      interface GigabitEthernet0/0/0/5
+       description to r114
+       cdp
+       ipv4 address 10.0.0.57 255.255.255.252
+      !
+      router static
+       vrf Mgmt-intf
+        address-family ipv4 unicast
+         10.16.0.0/16 198.18.1.1
+         10.64.0.0/16 198.18.1.1
+         198.18.128.0/18 198.18.1.1
+        !
+       !
+      !
+      router isis ISIS
+       is-type level-2-only
+       net 49.0001.1921.6800.0104.00
+       address-family ipv4 unicast
+        metric-style wide
+        advertise passive-only
+        mpls traffic-eng level-2-only
+        mpls traffic-eng router-id Loopback0
+       !
+       interface Loopback0
+        passive
+        address-family ipv4 unicast
+        !
+       !
+       interface GigabitEthernet0/0/0/0
+        point-to-point
+        hello-padding disable
+        address-family ipv4 unicast
+         metric 100
+        !
+       !
+       interface GigabitEthernet0/0/0/1
+        point-to-point
+        hello-padding disable
+        address-family ipv4 unicast
+         metric 1010
+        !
+       !
+       interface GigabitEthernet0/0/0/2
+        point-to-point
+        hello-padding disable
+        address-family ipv4 unicast
+         metric 1020
+        !
+       !
+       interface GigabitEthernet0/0/0/3
+        point-to-point
+        hello-padding disable
+        address-family ipv4 unicast
+         metric 103
+        !
+       !
+       interface GigabitEthernet0/0/0/5
+        point-to-point
+        hello-padding disable
+        address-family ipv4 unicast
+         metric 1050
+        !
+       !
+      !
+      mpls oam
+      !
+      rsvp
+       interface GigabitEthernet0/0/0/0
+       !
+       interface GigabitEthernet0/0/0/1
+       !
+       interface GigabitEthernet0/0/0/2
+       !
+       interface GigabitEthernet0/0/0/3
+       !
+       interface GigabitEthernet0/0/0/5
+       !
+      !
+      mpls traffic-eng
+       interface GigabitEthernet0/0/0/0
+       !
+       interface GigabitEthernet0/0/0/1
+       !
+       interface GigabitEthernet0/0/0/2
+       !
+       interface GigabitEthernet0/0/0/3
+       !
+       interface GigabitEthernet0/0/0/5
+       !
+      !
+      netconf-yang agent
+       ssh
+      !
+      ssh server v2
+      ssh server vrf Mgmt-intf
+      end
+    image_definition: xrv-663
+    cpu_limit: 40
+    tags: []
+    interfaces:
+      - id: i0
+        slot: 0
+        label: MgmtEth0/0/CPU0/0
+        type: physical
+      - id: i1
+        slot: 1
+        label: GigabitEthernet0/0/0/0
+        type: physical
+      - id: i2
+        slot: 2
+        label: GigabitEthernet0/0/0/1
+        type: physical
+      - id: i3
+        slot: 3
+        label: GigabitEthernet0/0/0/2
+        type: physical
+      - id: i4
+        slot: 4
+        label: GigabitEthernet0/0/0/3
+        type: physical
+      - id: i5
+        slot: 5
+        label: GigabitEthernet0/0/0/4
+        type: physical
+      - id: i6
+        slot: 6
+        label: GigabitEthernet0/0/0/5
+        type: physical
+  - id: n3
+    label: d113
+    node_definition: iosxrv9000
+    x: 50
+    y: 50
+    configuration: |2-
+
+      Mon Mar 29 17:46:34.612 UTC
+
+      Building configuration...
+
+      !! IOS XR Configuration 6.6.3
+
+      !! Last configuration change at Mon Mar 29 17:46:31 2021 by cisco
+
+      !
+
+      !  IOS-XR Config generated on 2021-02-21 03:53
+
+      ! by autonetkit_0.24.1
+
+      hostname d113
+
+      logging console disable
+
+      service timestamps log datetime msec
+
+      service timestamps debug datetime msec
+
+      domain name virl.info
+
+      domain lookup disable
+
+      telnet vrf default ipv4 server max-servers 10
+
+      telnet vrf Mgmt-intf ipv4 server max-servers 10
+
+      username cisco
+
+       group root-lr
+
+       group cisco-support
+
+       secret 5 $1$SZYI$7h6WAc2eB7FWbToG2CppX/
+
+      !
+
+      cdp
+
+      vrf Mgmt-intf
+
+       address-family ipv4 unicast
+
+       !
+
+      !
+
+      line template vty
+
+       timestamp
+
+       exec-timeout 720 0
+
+      !
+
+      line console
+
+       exec-timeout 0 0
+
+       absolute-timeout 0
+
+       session-timeout 0
+
+      !
+
+      line default
+
+       exec-timeout 0 0
+
+       absolute-timeout 0
+
+       session-timeout 0
+
+      !
+
+      vty-pool default 0 9
+
+      alias exec up show ipv4 vrf all interface brief | include Up
+
+      alias exec tun show mpls traffic-eng tunnels tabular
+
+      alias exec topo show isis topology
+
+      ipv4 unnumbered mpls traffic-eng Loopback0
+
+      call-home
+
+       service active
+
+       contact smart-licensing
+
+       profile CiscoTAC-1
+
+        active
+
+        destination transport-method http
+
+       !
+
+      !
+
+      control-plane
+
+       management-plane
+
+        inband
+
+         interface all
+
+          allow all
+
+         !
+
+         interface Loopback0
+
+         !
+
+        !
+
+       !
+
+      !
+
+      interface Loopback0
+
+       description Loopback
+
+       ipv4 address 192.168.1.113 255.255.255.255
+
+      !
+
+      interface tunnel-te11312
+
+       description to s112
+
+       autoroute announce
+
+       !
+
+       destination 192.168.1.112
+
+       path-option 10 dynamic
+
+      !
+
+      interface tunnel-te11314
+
+       description to d114
+
+       autoroute announce
+
+       !
+
+       destination 192.168.1.114
+
+       path-option 10 dynamic
+
+      !
+
+      interface tunnel-te11323
+
+       description to s123
+
+       autoroute announce
+
+       !
+
+       destination 192.168.1.123
+
+       path-option 10 dynamic
+
+      !
+
+      interface tunnel-te11324
+
+       description to s124
+
+       autoroute announce
+
+       !
+
+       destination 192.168.1.124
+
+       path-option 10 dynamic
+
+      !
+
+      interface tunnel-te11334
+
+       description to s134
+
+       autoroute announce
+
+       !
+
+       destination 192.168.1.134
+
+       path-option 10 dynamic
+
+      !
+
+      interface MgmtEth0/RP0/CPU0/0
+
+       description OOB Management
+
+       cdp
+
+       ! Configured on launch
+
+       vrf Mgmt-intf
+
+       ipv4 address 198.18.1.113 255.255.255.0
+
+      !
+
+      interface GigabitEthernet0/0/0/0
+
+       description to p101
+
+       cdp
+
+       ipv4 address 10.0.0.18 255.255.255.252
+
+      !
+
+      interface GigabitEthernet0/0/0/1
+
+       description to p103
+
+       cdp
+
+       ipv4 address 10.0.0.46 255.255.255.252
+
+      !
+
+      router static
+
+       vrf Mgmt-intf
+
+        address-family ipv4 unicast
+
+         10.16.0.0/16 198.18.1.1
+
+         10.64.0.0/16 198.18.1.1
+
+         198.18.128.0/18 198.18.1.1
+
+        !
+
+       !
+
+      !
+
+      router isis ISIS
+
+       is-type level-2-only
+
+       net 49.0001.1921.6800.1113.00
+
+       address-family ipv4 unicast
+
+        metric-style wide
+
+        advertise passive-only
+
+        mpls traffic-eng level-2-only
+
+        mpls traffic-eng router-id Loopback0
+
+       !
+
+       interface Loopback0
+
+        passive
+
+        address-family ipv4 unicast
+
+        !
+
+       !
+
+       interface GigabitEthernet0/0/0/0
+
+        point-to-point
+
+        hello-padding disable
+
+        address-family ipv4 unicast
+
+         metric 1000
+
+        !
+
+       !
+
+       interface GigabitEthernet0/0/0/1
+
+        point-to-point
+
+        hello-padding disable
+
+        address-family ipv4 unicast
+
+         metric 1010
+
+        !
+
+       !
+
+      !
+
+      mpls oam
+
+      !
+
+      rsvp
+
+       interface GigabitEthernet0/0/0/0
+
+       !
+
+       interface GigabitEthernet0/0/0/1
+
+       !
+
+      !
+
+      mpls traffic-eng
+
+       interface GigabitEthernet0/0/0/0
+
+       !
+
+       interface GigabitEthernet0/0/0/1
+
+       !
+
+      !
+
+      netconf-yang agent
+
+       ssh
+
+      !
+
+      ssh server v2
+
+      ssh server vrf Mgmt-intf
+
+      end
+    image_definition: xrv9k-663
+    tags: []
+    interfaces:
+      - id: i0
+        slot: 0
+        label: MgmtEth0/RP0/CPU0/0
+        type: physical
+      - id: i1
+        slot: 1
+        label: donotuse1
+        type: physical
+      - id: i2
+        slot: 2
+        label: donotuse2
+        type: physical
+      - id: i3
+        slot: 3
+        label: GigabitEthernet0/0/0/0
+        type: physical
+      - id: i4
+        slot: 4
+        label: GigabitEthernet0/0/0/1
+        type: physical
+  - id: n4
+    label: d114
+    node_definition: iosxrv9000
+    x: 450
+    y: 50
+    configuration: |2-
+
+      Mon Mar 29 17:46:35.818 UTC
+
+      Building configuration...
+
+      !! IOS XR Configuration 6.6.3
+
+      !! Last configuration change at Mon Mar 29 17:46:32 2021 by cisco
+
+      !
+
+      !  IOS-XR Config generated on 2021-02-21 03:53
+
+      ! by autonetkit_0.24.1
+
+      hostname d114
+
+      logging console disable
+
+      service timestamps log datetime msec
+
+      service timestamps debug datetime msec
+
+      domain name virl.info
+
+      domain lookup disable
+
+      telnet vrf default ipv4 server max-servers 10
+
+      telnet vrf Mgmt-intf ipv4 server max-servers 10
+
+      username cisco
+
+       group root-lr
+
+       group cisco-support
+
+       secret 5 $1$.q5P$I3hOztSWOWKwGl1mCD40h.
+
+      !
+
+      cdp
+
+      vrf Mgmt-intf
+
+       address-family ipv4 unicast
+
+       !
+
+      !
+
+      line template vty
+
+       timestamp
+
+       exec-timeout 720 0
+
+      !
+
+      line console
+
+       exec-timeout 0 0
+
+       absolute-timeout 0
+
+       session-timeout 0
+
+      !
+
+      line default
+
+       exec-timeout 0 0
+
+       absolute-timeout 0
+
+       session-timeout 0
+
+      !
+
+      vty-pool default 0 9
+
+      alias exec up show ipv4 vrf all interface brief | include Up
+
+      alias exec tun show mpls traffic-eng tunnels tabular
+
+      alias exec topo show isis topology
+
+      ipv4 unnumbered mpls traffic-eng Loopback0
+
+      call-home
+
+       service active
+
+       contact smart-licensing
+
+       profile CiscoTAC-1
+
+        active
+
+        destination transport-method http
+
+       !
+
+      !
+
+      control-plane
+
+       management-plane
+
+        inband
+
+         interface all
+
+          allow all
+
+         !
+
+         interface Loopback0
+
+         !
+
+         interface tunnel-te11412
+
+         !
+
+         interface tunnel-te11413
+
+         !
+
+         interface tunnel-te11423
+
+         !
+
+         interface tunnel-te11424
+
+         !
+
+         interface tunnel-te11434
+
+         !
+
+        !
+
+       !
+
+      !
+
+      interface Loopback0
+
+       description Loopback
+
+       ipv4 address 192.168.1.114 255.255.255.255
+
+      !
+
+      interface tunnel-te11412
+
+       description to s112
+
+       autoroute announce
+
+       !
+
+       destination 192.168.1.112
+
+       path-option 10 dynamic
+
+      !
+
+      interface tunnel-te11413
+
+       description to d113
+
+       autoroute announce
+
+       !
+
+       destination 192.168.1.113
+
+       path-option 10 dynamic
+
+      !
+
+      interface tunnel-te11423
+
+       description to s123
+
+       autoroute announce
+
+       !
+
+       destination 192.168.1.123
+
+       path-option 10 dynamic
+
+      !
+
+      interface tunnel-te11424
+
+       description to s124
+
+       autoroute announce
+
+       !
+
+       destination 192.168.1.124
+
+       path-option 10 dynamic
+
+      !
+
+      interface tunnel-te11434
+
+       description to s134
+
+       autoroute announce
+
+       !
+
+       destination 192.168.1.134
+
+       path-option 10 dynamic
+
+      !
+
+      interface MgmtEth0/RP0/CPU0/0
+
+       description OOB Management
+
+       cdp
+
+       ! Configured on launch
+
+       vrf Mgmt-intf
+
+       ipv4 address 198.18.1.114 255.255.255.0
+
+      !
+
+      interface GigabitEthernet0/0/0/0
+
+       description to p104
+
+       cdp
+
+       ipv4 address 10.0.0.58 255.255.255.252
+
+      !
+
+      interface GigabitEthernet0/0/0/1
+
+       description to p101
+
+       cdp
+
+       ipv4 address 10.0.0.22 255.255.255.252
+
+      !
+
+      router static
+
+       vrf Mgmt-intf
+
+        address-family ipv4 unicast
+
+         10.16.0.0/16 198.18.1.1
+
+         10.64.0.0/16 198.18.1.1
+
+         198.18.128.0/18 198.18.1.1
+
+        !
+
+       !
+
+      !
+
+      router isis ISIS
+
+       is-type level-2-only
+
+       net 49.0001.1921.6800.1114.00
+
+       address-family ipv4 unicast
+
+        metric-style wide
+
+        advertise passive-only
+
+        mpls traffic-eng level-2-only
+
+        mpls traffic-eng router-id Loopback0
+
+       !
+
+       interface Loopback0
+
+        passive
+
+        address-family ipv4 unicast
+
+        !
+
+       !
+
+       interface GigabitEthernet0/0/0/0
+
+        point-to-point
+
+        hello-padding disable
+
+        address-family ipv4 unicast
+
+         metric 1000
+
+        !
+
+       !
+
+       interface GigabitEthernet0/0/0/1
+
+        point-to-point
+
+        hello-padding disable
+
+        address-family ipv4 unicast
+
+         metric 1010
+
+        !
+
+       !
+
+      !
+
+      mpls oam
+
+      !
+
+      rsvp
+
+       interface GigabitEthernet0/0/0/0
+
+       !
+
+       interface GigabitEthernet0/0/0/1
+
+       !
+
+      !
+
+      mpls traffic-eng
+
+       interface GigabitEthernet0/0/0/0
+
+       !
+
+       interface GigabitEthernet0/0/0/1
+
+       !
+
+      !
+
+      netconf-yang agent
+
+       ssh
+
+      !
+
+      ssh server v2
+
+      ssh server vrf Mgmt-intf
+
+      end
+    image_definition: xrv9k-663
+    tags: []
+    interfaces:
+      - id: i0
+        slot: 0
+        label: MgmtEth0/RP0/CPU0/0
+        type: physical
+      - id: i1
+        slot: 1
+        label: donotuse1
+        type: physical
+      - id: i2
+        slot: 2
+        label: donotuse2
+        type: physical
+      - id: i3
+        slot: 3
+        label: GigabitEthernet0/0/0/0
+        type: physical
+      - id: i4
+        slot: 4
+        label: GigabitEthernet0/0/0/1
+        type: physical
+  - id: n5
+    label: s123
+    node_definition: csr1000v
+    x: 50
+    y: 350
+    configuration: "Building configuration...\n\nCurrent configuration : 7958 bytes\n\
+      !\n! Last configuration change at 17:46:30 UTC Mon Mar 29 2021\n!\nversion 17.3\n\
+      service timestamps debug datetime msec\nservice timestamps log datetime msec\n\
+      service call-home\nplatform qfp utilization monitor load 80\nplatform punt-keepalive\
+      \ disable-kernel-core\nplatform console serial\n!\nhostname s123\n!\nboot-start-marker\n\
+      boot-end-marker\n!\n!\nno logging console\nenable secret 9 $9$Xa0sjGOedVoNvE$Gm0tntS9Iji/mjNQDX8Ss7BzRryhYlF.23z78R4.u3w\n\
+      !\nno aaa new-model\n!\n!\n!\n!\n!\n!\n!\nno ip domain lookup\nip domain name\
+      \ virl.info\n!\n!\n!\nlogin on-success log\n!\n!\n!\n!\n!\n!\n!\nsubscriber\
+      \ templating\n!\n!\n!\n!\n!\n!\nmpls traffic-eng tunnels\nmultilink bundle-name\
+      \ authenticated\n!\ndomain virl.info\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n\
+      !\ncrypto pki trustpoint SLA-TrustPoint\n enrollment pkcs12\n revocation-check\
+      \ crl\n!\ncrypto pki trustpoint TP-self-signed-1603565340\n enrollment selfsigned\n\
+      \ subject-name cn=IOS-Self-Signed-Certificate-1603565340\n revocation-check\
+      \ none\n rsakeypair TP-self-signed-1603565340\n!\n!\ncrypto pki certificate\
+      \ chain SLA-TrustPoint\n certificate ca 01\n  30820321 30820209 A0030201 02020101\
+      \ 300D0609 2A864886 F70D0101 0B050030\n  32310E30 0C060355 040A1305 43697363\
+      \ 6F312030 1E060355 04031317 43697363\n  6F204C69 63656E73 696E6720 526F6F74\
+      \ 20434130 1E170D31 33303533 30313934\n  3834375A 170D3338 30353330 31393438\
+      \ 34375A30 32310E30 0C060355 040A1305\n  43697363 6F312030 1E060355 04031317\
+      \ 43697363 6F204C69 63656E73 696E6720\n  526F6F74 20434130 82012230 0D06092A\
+      \ 864886F7 0D010101 05000382 010F0030\n  82010A02 82010100 A6BCBD96 131E05F7\
+      \ 145EA72C 2CD686E6 17222EA1 F1EFF64D\n  CBB4C798 212AA147 C655D8D7 9471380D\
+      \ 8711441E 1AAF071A 9CAE6388 8A38E520\n  1C394D78 462EF239 C659F715 B98C0A59\
+      \ 5BBB5CBD 0CFEBEA3 700A8BF7 D8F256EE\n  4AA4E80D DB6FD1C9 60B1FD18 FFC69C96\
+      \ 6FA68957 A2617DE7 104FDC5F EA2956AC\n  7390A3EB 2B5436AD C847A2C5 DAB553EB\
+      \ 69A9A535 58E9F3E3 C0BD23CF 58BD7188\n  68E69491 20F320E7 948E71D7 AE3BCC84\
+      \ F10684C7 4BC8E00F 539BA42B 42C68BB7\n  C7479096 B4CB2D62 EA2F505D C7B062A4\
+      \ 6811D95B E8250FC4 5D5D5FB8 8F27D191\n  C55F0D76 61F9A4CD 3D992327 A8BB03BD\
+      \ 4E6D7069 7CBADF8B DF5F4368 95135E44\n  DFC7C6CF 04DD7FD1 02030100 01A34230\
+      \ 40300E06 03551D0F 0101FF04 04030201\n  06300F06 03551D13 0101FF04 05300301\
+      \ 01FF301D 0603551D 0E041604 1449DC85\n  4B3D31E5 1B3E6A17 606AF333 3D3B4C73\
+      \ E8300D06 092A8648 86F70D01 010B0500\n  03820101 00507F24 D3932A66 86025D9F\
+      \ E838AE5C 6D4DF6B0 49631C78 240DA905\n  604EDCDE FF4FED2B 77FC460E CD636FDB\
+      \ DD44681E 3A5673AB 9093D3B1 6C9E3D8B\n  D98987BF E40CBD9E 1AECA0C2 2189BB5C\
+      \ 8FA85686 CD98B646 5575B146 8DFC66A8\n  467A3DF4 4D565700 6ADF0F0D CF835015\
+      \ 3C04FF7C 21E878AC 11BA9CD2 55A9232C\n  7CA7B7E6 C1AF74F6 152E99B7 B1FCF9BB\
+      \ E973DE7F 5BDDEB86 C71E3B49 1765308B\n  5FB0DA06 B92AFE7F 494E8A9E 07B85737\
+      \ F3A58BE1 1A48A229 C37C1E69 39F08678\n  80DDCD16 D6BACECA EEBC7CF9 8428787B\
+      \ 35202CDC 60E4616A B623CDBD 230E3AFB\n  418616A9 4093E049 4D10AB75 27E86F73\
+      \ 932E35B5 8862FDAE 0275156F 719BB2F0\n  D697DF7F 28\n  \tquit\ncrypto pki certificate\
+      \ chain TP-self-signed-1603565340\n certificate self-signed 01\n  30820330 30820218\
+      \ A0030201 02020101 300D0609 2A864886 F70D0101 05050030\n  31312F30 2D060355\
+      \ 04031326 494F532D 53656C66 2D536967 6E65642D 43657274\n  69666963 6174652D\
+      \ 31363033 35363533 3430301E 170D3231 30333239 31373231\n  34305A17 0D333130\
+      \ 33323931 37323134 305A3031 312F302D 06035504 03132649\n  4F532D53 656C662D\
+      \ 5369676E 65642D43 65727469 66696361 74652D31 36303335\n  36353334 30308201\
+      \ 22300D06 092A8648 86F70D01 01010500 0382010F 00308201\n  0A028201 0100BAC4\
+      \ A3C90BF2 69F36B38 D406ED5B CA170FEA CC06EDCD 11A4D1FC\n  B8815F95 37D641CF\
+      \ 68EC59C2 C622C927 45C375DE DA54C936 BA56177C 6223B76B\n  1FDBE55F 6E79F367\
+      \ 5633DAF4 547C79B6 0DBB2FA4 2B9D0ADD E6022DEC 9610F11F\n  C4D89B9F C363CD26\
+      \ ADC1E62A C3162E1E 16DE2968 33B5B029 223F7BBD 303E56F7\n  125A230B 5C465545\
+      \ FDA18EE8 1C6E310A 10605186 E1FE618F 4890D89A A727CA7E\n  1280F13A FE19FEA3\
+      \ 3E0F7DD1 209E7CD5 E9BE1B29 176EDBA7 8C6B8268 B97D9B4B\n  82D4E34F 22227882\
+      \ 3E4DA4BB 44A965C6 903B2AA9 33332B7D 68977110 2288E3A7\n  F5B387A2 7FD3B8D5\
+      \ 44774E5C FC3A9742 583160CB 7AC9D0A7 BBC58ED1 D906CCAB\n  E15646BE E6490203\
+      \ 010001A3 53305130 0F060355 1D130101 FF040530 030101FF\n  301F0603 551D2304\
+      \ 18301680 14259B62 19299C6A 8F3BA958 7E0B801C 5BB84C24\n  DC301D06 03551D0E\
+      \ 04160414 259B6219 299C6A8F 3BA9587E 0B801C5B B84C24DC\n  300D0609 2A864886\
+      \ F70D0101 05050003 82010100 2C03BD14 892CE76F 6A269135\n  C6C837F2 45D46093\
+      \ 4BB2A194 C6242219 A4EC8E90 0C06CC68 1B723754 774B7D24\n  35F3F751 5F94C059\
+      \ BCB7B7A4 F8BD9A8B 471309A7 77D15251 1686358C A7234B12\n  29D53630 90617519\
+      \ 9096E1AD DA165DE0 725B85DB 15A12031 E34C61C4 DA87EAF8\n  420390A5 E835DFB6\
+      \ 928EB98B 8FF3EE48 CF67349A 8E453551 5A84163B 966BED41\n  043879F2 62873243\
+      \ 98F9D8A5 6B4057E7 65464020 6EE8F3FF 955D59E8 25B06EAD\n  43E7E839 B6C9586F\
+      \ 5C7C2DF1 8BEBBF46 D7D2AD6E 190B5CD7 410F58F1 07F3C064\n  53775F7B 001C3BD8\
+      \ EA451EC6 9F596022 5F29CAAB C421B994 F6CA3CF3 B01264C6\n  F29BF0AD 56C6C1D6\
+      \ BE0CD851 090BA79F 83D57056\n  \tquit\n!\nlicense udi pid CSR1000V sn 9YTMNVHPDOK\n\
+      diagnostic bootup level minimal\nmemory free low-watermark processor 71507\n\
+      !\n!\nspanning-tree extend system-id\n!\nusername cisco privilege 15 secret\
+      \ 9 $9$bXPhU6zYxEm3rU$BlGWkKgxXuyERDLuCYBehusaL6ZG3QhBmtmTuApiEu2\n!\nredundancy\n\
+      !\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n\
+      interface Loopback0\n description Loopback\n ip address 192.168.1.123 255.255.255.255\n\
+      \ isis circuit-type level-2-only\n!\ninterface Tunnel12313\n description to\
+      \ d113\n ip unnumbered Loopback0\n mpls traffic-eng tunnels\n tunnel mode mpls\
+      \ traffic-eng\n tunnel destination 192.168.1.113\n tunnel mpls traffic-eng autoroute\
+      \ announce\n tunnel mpls traffic-eng path-option 10 dynamic\n!\ninterface Tunnel12314\n\
+      \ description to d114\n ip unnumbered Loopback0\n mpls traffic-eng tunnels\n\
+      \ tunnel mode mpls traffic-eng\n tunnel destination 192.168.1.114\n tunnel mpls\
+      \ traffic-eng autoroute announce\n tunnel mpls traffic-eng path-option 10 dynamic\n\
+      !\ninterface GigabitEthernet1\n description OOB Management\n ip address 198.18.1.123\
+      \ 255.255.255.0\n negotiation auto\n cdp enable\n no mop enabled\n no mop sysid\n\
+      !\ninterface GigabitEthernet2\n description ip p103\n ip address 10.0.0.50 255.255.255.252\n\
+      \ ip router isis ISIS\n negotiation auto\n cdp enable\n mpls traffic-eng tunnels\n\
+      \ no mop enabled\n no mop sysid\n isis circuit-type level-2-only\n isis network\
+      \ point-to-point\n isis metric 1020 level-1\n isis metric 1020 level-2\n no\
+      \ isis hello padding\n ip rsvp bandwidth\n!\ninterface GigabitEthernet3\n description\
+      \ to p102\n ip address 10.0.0.34 255.255.255.252\n ip router isis ISIS\n negotiation\
+      \ auto\n cdp enable\n mpls traffic-eng tunnels\n no mop enabled\n no mop sysid\n\
+      \ isis circuit-type level-2-only\n isis network point-to-point\n isis metric\
+      \ 1030 level-1\n isis metric 1030 level-2\n no isis hello padding\n ip rsvp\
+      \ bandwidth\n!\nrouter isis ISIS\n net 49.0001.1921.6800.1123.00\n is-type level-2-only\n\
+      \ advertise passive-only\n metric-style wide\n passive-interface Loopback0\n\
+      \ mpls traffic-eng router-id Loopback0\n mpls traffic-eng level-2\n!\nip forward-protocol\
+      \ nd\nno ip http server\nip http authentication local\nip http secure-server\n\
+      ip http client source-interface GigabitEthernet1\n!\nip tftp source-interface\
+      \ GigabitEthernet1\nip route 10.16.0.0 255.255.0.0 198.18.1.1\nip route 10.64.0.0\
+      \ 255.255.0.0 198.18.1.1\nip route 198.18.128.0 255.255.192.0 198.18.1.1\nip\
+      \ ssh version 2\n!\n!\n!\n!\n!\n!\n!\ncontrol-plane\n!\n!\n!\n!\n!\nalias exec\
+      \ up show ip interface brief | include up\nalias exec tun show mpls traffic-eng\
+      \ tunnels brief\nalias exec topo show isis topology\n!\nline con 0\n exec-timeout\
+      \ 0 0\n logging synchronous\n stopbits 1\nline vty 0 4\n exec-timeout 12 0\n\
+      \ login local\n transport input ssh\n!\ncall-home\n ! If contact email address\
+      \ in call-home is configured as sch-smart-licensing@cisco.com\n ! the email\
+      \ address configured in Cisco Smart License Portal will be used as contact email\
+      \ address to send SCH notifications.\n contact-email-addr sch-smart-licensing@cisco.com\n\
+      \ profile \"CiscoTAC-1\"\n  active\n  destination transport-method http\nnetconf\
+      \ ssh\n!\n!\n!\n!\n!\nend"
+    cpu_limit: 40
+    tags: []
+    interfaces:
+      - id: i0
+        slot: 0
+        label: GigabitEthernet1
+        type: physical
+      - id: i1
+        slot: 1
+        label: GigabitEthernet2
+        type: physical
+      - id: i2
+        slot: 2
+        label: GigabitEthernet3
+        type: physical
+  - id: n6
+    label: s124
+    node_definition: csr1000v
+    x: 350
+    y: 350
+    configuration: "Building configuration...\n\nCurrent configuration : 8060 bytes\n\
+      !\n! Last configuration change at 17:46:30 UTC Mon Mar 29 2021\n!\nversion 17.3\n\
+      service timestamps debug datetime msec\nservice timestamps log datetime msec\n\
+      service call-home\nplatform qfp utilization monitor load 80\nplatform punt-keepalive\
+      \ disable-kernel-core\nplatform console serial\n!\nhostname s124\n!\nboot-start-marker\n\
+      boot-end-marker\n!\n!\nno logging console\nenable secret 9 $9$6Hk55l4HGEfL4k$DEDCq5ZBu8fPtwOa1nJPNH2s4cm4.LagZ4MTmV51o1E\n\
+      !\nno aaa new-model\n!\n!\n!\n!\n!\n!\n!\nno ip domain lookup\nip domain name\
+      \ virl.info\n!\n!\n!\nlogin on-success log\n!\n!\n!\n!\n!\n!\n!\nsubscriber\
+      \ templating\n!\n!\n!\n!\n!\n!\nmpls traffic-eng tunnels\nmultilink bundle-name\
+      \ authenticated\n!\ndomain virl.info\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n\
+      !\ncrypto pki trustpoint SLA-TrustPoint\n enrollment pkcs12\n revocation-check\
+      \ crl\n!\ncrypto pki trustpoint TP-self-signed-2277856858\n enrollment selfsigned\n\
+      \ subject-name cn=IOS-Self-Signed-Certificate-2277856858\n revocation-check\
+      \ none\n rsakeypair TP-self-signed-2277856858\n!\n!\ncrypto pki certificate\
+      \ chain SLA-TrustPoint\n certificate ca 01\n  30820321 30820209 A0030201 02020101\
+      \ 300D0609 2A864886 F70D0101 0B050030\n  32310E30 0C060355 040A1305 43697363\
+      \ 6F312030 1E060355 04031317 43697363\n  6F204C69 63656E73 696E6720 526F6F74\
+      \ 20434130 1E170D31 33303533 30313934\n  3834375A 170D3338 30353330 31393438\
+      \ 34375A30 32310E30 0C060355 040A1305\n  43697363 6F312030 1E060355 04031317\
+      \ 43697363 6F204C69 63656E73 696E6720\n  526F6F74 20434130 82012230 0D06092A\
+      \ 864886F7 0D010101 05000382 010F0030\n  82010A02 82010100 A6BCBD96 131E05F7\
+      \ 145EA72C 2CD686E6 17222EA1 F1EFF64D\n  CBB4C798 212AA147 C655D8D7 9471380D\
+      \ 8711441E 1AAF071A 9CAE6388 8A38E520\n  1C394D78 462EF239 C659F715 B98C0A59\
+      \ 5BBB5CBD 0CFEBEA3 700A8BF7 D8F256EE\n  4AA4E80D DB6FD1C9 60B1FD18 FFC69C96\
+      \ 6FA68957 A2617DE7 104FDC5F EA2956AC\n  7390A3EB 2B5436AD C847A2C5 DAB553EB\
+      \ 69A9A535 58E9F3E3 C0BD23CF 58BD7188\n  68E69491 20F320E7 948E71D7 AE3BCC84\
+      \ F10684C7 4BC8E00F 539BA42B 42C68BB7\n  C7479096 B4CB2D62 EA2F505D C7B062A4\
+      \ 6811D95B E8250FC4 5D5D5FB8 8F27D191\n  C55F0D76 61F9A4CD 3D992327 A8BB03BD\
+      \ 4E6D7069 7CBADF8B DF5F4368 95135E44\n  DFC7C6CF 04DD7FD1 02030100 01A34230\
+      \ 40300E06 03551D0F 0101FF04 04030201\n  06300F06 03551D13 0101FF04 05300301\
+      \ 01FF301D 0603551D 0E041604 1449DC85\n  4B3D31E5 1B3E6A17 606AF333 3D3B4C73\
+      \ E8300D06 092A8648 86F70D01 010B0500\n  03820101 00507F24 D3932A66 86025D9F\
+      \ E838AE5C 6D4DF6B0 49631C78 240DA905\n  604EDCDE FF4FED2B 77FC460E CD636FDB\
+      \ DD44681E 3A5673AB 9093D3B1 6C9E3D8B\n  D98987BF E40CBD9E 1AECA0C2 2189BB5C\
+      \ 8FA85686 CD98B646 5575B146 8DFC66A8\n  467A3DF4 4D565700 6ADF0F0D CF835015\
+      \ 3C04FF7C 21E878AC 11BA9CD2 55A9232C\n  7CA7B7E6 C1AF74F6 152E99B7 B1FCF9BB\
+      \ E973DE7F 5BDDEB86 C71E3B49 1765308B\n  5FB0DA06 B92AFE7F 494E8A9E 07B85737\
+      \ F3A58BE1 1A48A229 C37C1E69 39F08678\n  80DDCD16 D6BACECA EEBC7CF9 8428787B\
+      \ 35202CDC 60E4616A B623CDBD 230E3AFB\n  418616A9 4093E049 4D10AB75 27E86F73\
+      \ 932E35B5 8862FDAE 0275156F 719BB2F0\n  D697DF7F 28\n  \tquit\ncrypto pki certificate\
+      \ chain TP-self-signed-2277856858\n certificate self-signed 01\n  30820330 30820218\
+      \ A0030201 02020101 300D0609 2A864886 F70D0101 05050030\n  31312F30 2D060355\
+      \ 04031326 494F532D 53656C66 2D536967 6E65642D 43657274\n  69666963 6174652D\
+      \ 32323737 38353638 3538301E 170D3231 30333238 31393131\n  35325A17 0D333130\
+      \ 33323831 39313135 325A3031 312F302D 06035504 03132649\n  4F532D53 656C662D\
+      \ 5369676E 65642D43 65727469 66696361 74652D32 32373738\n  35363835 38308201\
+      \ 22300D06 092A8648 86F70D01 01010500 0382010F 00308201\n  0A028201 0100DB94\
+      \ 2FD9836D 8A30BD21 CEB9EEE7 D03E32B2 CE99D1D3 C9F7C240\n  F6D39F3D DB26DF60\
+      \ 1B70B891 184D478E D94E8083 6CADB129 1A59A108 DC6962F0\n  A393E206 79B30D02\
+      \ 3A115157 A7CF05BD DEB2DD95 1E0030BC AA8F7CCC 3F1A5E58\n  27A17872 79328E39\
+      \ 93210B9D 40D04172 D5D2029E A5023F98 3CA75A7F BF0629C6\n  FB8F3F7E EFA4747B\
+      \ 69F0AEF7 D646C6BA C2A2BF9B 01350C78 1E4DA988 BBF39375\n  CACBCCE6 E9EEC5FA\
+      \ D393E0FD BA4221A2 1C8A3BC2 BCBD6AAA 4B786E0E E5BD7173\n  2056EC0E D21E8B47\
+      \ B78C9F71 343F8328 1DD41D61 0F5DEBB8 220CB573 75050013\n  4AEC2CD6 28685760\
+      \ 59A6FCDA D7149769 B144A8B5 D6518FDE B9404C30 5D08007D\n  76F025BA EE430203\
+      \ 010001A3 53305130 0F060355 1D130101 FF040530 030101FF\n  301F0603 551D2304\
+      \ 18301680 14D6A900 13A4EF24 341F7831 F16BDCDA B73684D9\n  7C301D06 03551D0E\
+      \ 04160414 D6A90013 A4EF2434 1F7831F1 6BDCDAB7 3684D97C\n  300D0609 2A864886\
+      \ F70D0101 05050003 82010100 B7340ACA F46AC707 51B7DEBF\n  22CF2055 C3F76305\
+      \ BB5CFA57 3F34585C 9FCD70F7 9C4586D7 953CC1EE 523FF797\n  E0F78C0D 9E84511B\
+      \ 61CD4C81 3F95CF5C 5B05AF66 0C18A3F1 E444AD06 AEABCC17\n  12609B74 8E4C0ADC\
+      \ 0E91167C 05C954EE C1D65448 7AD481F2 E1ACFAB0 7C65BB3A\n  07A96041 8952BB57\
+      \ 94CFC28E 8B99A49F 52C27515 1D257452 A8224439 BA6143D1\n  0D701F55 385F5AB7\
+      \ 325F0D38 0BF7FC6F 377A7179 E3174269 ADDE95A8 1CE19E1D\n  A23A90ED C669834B\
+      \ A21D8DAC E41561DB E43CAFB4 48C03AFB FFC277A8 FBAC2343\n  603C913D 7BEDD62A\
+      \ 8F3C2C05 2D4AB3F6 CE5AEF1B 1F183554 0CCF76B4 52EA4C5E\n  A92170E6 EF12FDFD\
+      \ E85C5508 6ED758E1 D9CBDCC8\n  \tquit\n!\nlicense udi pid CSR1000V sn 90O5UAMEFEK\n\
+      diagnostic bootup level minimal\nmemory free low-watermark processor 71507\n\
+      !\n!\nspanning-tree extend system-id\n!\nusername cisco privilege 15 secret\
+      \ 9 $9$SprreUdxWBPHT.$ysw5UunEb93xTbnQMPybiIBPj2Ka/N5jM35CKXwOYKA\n!\nredundancy\n\
+      !\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n\
+      interface Loopback0\n description Loopback\n ip address 192.168.1.124 255.255.255.255\n\
+      \ isis circuit-type level-2-only\n!\ninterface Tunnel12413\n description to\
+      \ d113\n ip unnumbered Loopback0\n mpls traffic-eng tunnels\n tunnel mode mpls\
+      \ traffic-eng\n tunnel destination 192.168.1.113\n tunnel mpls traffic-eng autoroute\
+      \ announce\n tunnel mpls traffic-eng path-option 10 dynamic\n!\ninterface Tunnel12414\n\
+      \ description to d114\n ip unnumbered Loopback0\n mpls traffic-eng tunnels\n\
+      \ tunnel mode mpls traffic-eng\n tunnel destination 192.168.1.114\n tunnel mpls\
+      \ traffic-eng autoroute announce\n tunnel mpls traffic-eng path-option 10 dynamic\n\
+      !\ninterface GigabitEthernet1\n description OOB Management\n ip address 198.18.1.124\
+      \ 255.255.255.0\n negotiation auto\n cdp enable\n no mop enabled\n no mop sysid\n\
+      !\ninterface GigabitEthernet2\n description to p104\n ip address 10.0.0.62 255.255.255.252\n\
+      \ ip router isis ISIS\n negotiation auto\n cdp enable\n mpls traffic-eng tunnels\n\
+      \ no mop enabled\n no mop sysid\n isis circuit-type level-2-only\n isis network\
+      \ point-to-point\n isis metric 1020 level-1\n isis metric 1020 level-2\n no\
+      \ isis hello padding\n ip rsvp bandwidth\n!\ninterface GigabitEthernet3\n description\
+      \ to p102\n ip address 10.0.0.38 255.255.255.252\n ip router isis ISIS\n negotiation\
+      \ auto\n cdp enable\n mpls traffic-eng tunnels\n no mop enabled\n no mop sysid\n\
+      \ isis circuit-type level-2-only\n isis network point-to-point\n isis metric\
+      \ 1030 level-1\n isis metric 1030 level-2\n no isis hello padding\n ip rsvp\
+      \ bandwidth\n!\ninterface GigabitEthernet4\n no ip address\n shutdown\n negotiation\
+      \ auto\n no mop enabled\n no mop sysid\n!\nrouter isis ISIS\n net 49.0001.1921.6800.1124.00\n\
+      \ is-type level-2-only\n advertise passive-only\n metric-style wide\n passive-interface\
+      \ Loopback0\n mpls traffic-eng router-id Loopback0\n mpls traffic-eng level-2\n\
+      !\nip forward-protocol nd\nno ip http server\nip http authentication local\n\
+      ip http secure-server\nip http client source-interface GigabitEthernet1\n!\n\
+      ip tftp source-interface GigabitEthernet1\nip route 10.16.0.0 255.255.0.0 198.18.1.1\n\
+      ip route 10.64.0.0 255.255.0.0 198.18.1.1\nip route 198.18.128.0 255.255.192.0\
+      \ 198.18.1.1\nip ssh version 2\n!\n!\n!\n!\n!\n!\n!\ncontrol-plane\n!\n!\n!\n\
+      !\n!\nalias exec up show ip interface brief | include up\nalias exec tun show\
+      \ mpls traffic-eng tunnels brief\nalias exec topo show isis topology\n!\nline\
+      \ con 0\n exec-timeout 0 0\n logging synchronous\n stopbits 1\nline vty 0 4\n\
+      \ exec-timeout 12 0\n login local\n transport input ssh\n!\ncall-home\n ! If\
+      \ contact email address in call-home is configured as sch-smart-licensing@cisco.com\n\
+      \ ! the email address configured in Cisco Smart License Portal will be used\
+      \ as contact email address to send SCH notifications.\n contact-email-addr sch-smart-licensing@cisco.com\n\
+      \ profile \"CiscoTAC-1\"\n  active\n  destination transport-method http\nnetconf\
+      \ ssh\n!\n!\n!\n!\n!\nend"
+    cpu_limit: 40
+    tags: []
+    interfaces:
+      - id: i0
+        slot: 0
+        label: GigabitEthernet1
+        type: physical
+      - id: i1
+        slot: 1
+        label: GigabitEthernet2
+        type: physical
+      - id: i2
+        slot: 2
+        label: GigabitEthernet3
+        type: physical
+      - id: i3
+        slot: 3
+        label: GigabitEthernet4
+        type: physical
+  - id: n7
+    label: s134
+    node_definition: csr1000v
+    x: 650
+    y: 355
+    configuration: "Building configuration...\n\nCurrent configuration : 7958 bytes\n\
+      !\n! Last configuration change at 17:46:30 UTC Mon Mar 29 2021\n!\nversion 17.3\n\
+      service timestamps debug datetime msec\nservice timestamps log datetime msec\n\
+      service call-home\nplatform qfp utilization monitor load 80\nplatform punt-keepalive\
+      \ disable-kernel-core\nplatform console serial\n!\nhostname s134\n!\nboot-start-marker\n\
+      boot-end-marker\n!\n!\nno logging console\nenable secret 9 $9$Iop6phoCcC9ITU$eL.2kJQgIDotzBiIcPs.ohvcalRqDkv5nUhwwENjKQI\n\
+      !\nno aaa new-model\n!\n!\n!\n!\n!\n!\n!\nno ip domain lookup\nip domain name\
+      \ virl.info\n!\n!\n!\nlogin on-success log\n!\n!\n!\n!\n!\n!\n!\nsubscriber\
+      \ templating\n!\n!\n!\n!\n!\n!\nmpls traffic-eng tunnels\nmultilink bundle-name\
+      \ authenticated\n!\ndomain virl.info\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n\
+      !\ncrypto pki trustpoint SLA-TrustPoint\n enrollment pkcs12\n revocation-check\
+      \ crl\n!\ncrypto pki trustpoint TP-self-signed-2641078642\n enrollment selfsigned\n\
+      \ subject-name cn=IOS-Self-Signed-Certificate-2641078642\n revocation-check\
+      \ none\n rsakeypair TP-self-signed-2641078642\n!\n!\ncrypto pki certificate\
+      \ chain SLA-TrustPoint\n certificate ca 01\n  30820321 30820209 A0030201 02020101\
+      \ 300D0609 2A864886 F70D0101 0B050030\n  32310E30 0C060355 040A1305 43697363\
+      \ 6F312030 1E060355 04031317 43697363\n  6F204C69 63656E73 696E6720 526F6F74\
+      \ 20434130 1E170D31 33303533 30313934\n  3834375A 170D3338 30353330 31393438\
+      \ 34375A30 32310E30 0C060355 040A1305\n  43697363 6F312030 1E060355 04031317\
+      \ 43697363 6F204C69 63656E73 696E6720\n  526F6F74 20434130 82012230 0D06092A\
+      \ 864886F7 0D010101 05000382 010F0030\n  82010A02 82010100 A6BCBD96 131E05F7\
+      \ 145EA72C 2CD686E6 17222EA1 F1EFF64D\n  CBB4C798 212AA147 C655D8D7 9471380D\
+      \ 8711441E 1AAF071A 9CAE6388 8A38E520\n  1C394D78 462EF239 C659F715 B98C0A59\
+      \ 5BBB5CBD 0CFEBEA3 700A8BF7 D8F256EE\n  4AA4E80D DB6FD1C9 60B1FD18 FFC69C96\
+      \ 6FA68957 A2617DE7 104FDC5F EA2956AC\n  7390A3EB 2B5436AD C847A2C5 DAB553EB\
+      \ 69A9A535 58E9F3E3 C0BD23CF 58BD7188\n  68E69491 20F320E7 948E71D7 AE3BCC84\
+      \ F10684C7 4BC8E00F 539BA42B 42C68BB7\n  C7479096 B4CB2D62 EA2F505D C7B062A4\
+      \ 6811D95B E8250FC4 5D5D5FB8 8F27D191\n  C55F0D76 61F9A4CD 3D992327 A8BB03BD\
+      \ 4E6D7069 7CBADF8B DF5F4368 95135E44\n  DFC7C6CF 04DD7FD1 02030100 01A34230\
+      \ 40300E06 03551D0F 0101FF04 04030201\n  06300F06 03551D13 0101FF04 05300301\
+      \ 01FF301D 0603551D 0E041604 1449DC85\n  4B3D31E5 1B3E6A17 606AF333 3D3B4C73\
+      \ E8300D06 092A8648 86F70D01 010B0500\n  03820101 00507F24 D3932A66 86025D9F\
+      \ E838AE5C 6D4DF6B0 49631C78 240DA905\n  604EDCDE FF4FED2B 77FC460E CD636FDB\
+      \ DD44681E 3A5673AB 9093D3B1 6C9E3D8B\n  D98987BF E40CBD9E 1AECA0C2 2189BB5C\
+      \ 8FA85686 CD98B646 5575B146 8DFC66A8\n  467A3DF4 4D565700 6ADF0F0D CF835015\
+      \ 3C04FF7C 21E878AC 11BA9CD2 55A9232C\n  7CA7B7E6 C1AF74F6 152E99B7 B1FCF9BB\
+      \ E973DE7F 5BDDEB86 C71E3B49 1765308B\n  5FB0DA06 B92AFE7F 494E8A9E 07B85737\
+      \ F3A58BE1 1A48A229 C37C1E69 39F08678\n  80DDCD16 D6BACECA EEBC7CF9 8428787B\
+      \ 35202CDC 60E4616A B623CDBD 230E3AFB\n  418616A9 4093E049 4D10AB75 27E86F73\
+      \ 932E35B5 8862FDAE 0275156F 719BB2F0\n  D697DF7F 28\n  \tquit\ncrypto pki certificate\
+      \ chain TP-self-signed-2641078642\n certificate self-signed 01\n  30820330 30820218\
+      \ A0030201 02020101 300D0609 2A864886 F70D0101 05050030\n  31312F30 2D060355\
+      \ 04031326 494F532D 53656C66 2D536967 6E65642D 43657274\n  69666963 6174652D\
+      \ 32363431 30373836 3432301E 170D3231 30333238 31393134\n  31365A17 0D333130\
+      \ 33323831 39313431 365A3031 312F302D 06035504 03132649\n  4F532D53 656C662D\
+      \ 5369676E 65642D43 65727469 66696361 74652D32 36343130\n  37383634 32308201\
+      \ 22300D06 092A8648 86F70D01 01010500 0382010F 00308201\n  0A028201 01009A8D\
+      \ A27F8047 A41C1547 DAE26C9F 0A78EB27 E6E8419E 28063DD1\n  E5AAB420 EC1DDFF6\
+      \ 6BE5E607 1E5F7CAE BEA88781 9EEAAA2A AC7769B8 DC592C0A\n  4E4B5462 47E7FB09\
+      \ FED2670F 4E860F4D 6FA32634 6BC71D38 B41402C7 FF1D2A62\n  F26B6A1E FDDF8AC6\
+      \ 19B6149F 25E6CA40 8367DAA6 D202B95D EA7070A3 EE7DA7F5\n  6700E5C1 AE06B1E4\
+      \ 6A7F8660 F8E8773E 84FEEDF9 517A60A8 98C73BCC 6140970D\n  404C2169 36DB42C4\
+      \ 1C171E54 5E08F1EF 056D28C2 88B742C4 FF816539 E70B7713\n  45D1B2F1 D49E0DFD\
+      \ B1B00F29 974418DC F1500C53 842C7A23 A28E479D 2C10CD7E\n  C9248F8D BD9F2E7E\
+      \ 23F2791A 9D1B6E9B 72B07863 3674072D 2C5F905F 95834FEF\n  3A737E4A 09AF0203\
+      \ 010001A3 53305130 0F060355 1D130101 FF040530 030101FF\n  301F0603 551D2304\
+      \ 18301680 14AC573B 1C135956 3A5DB481 2D04E040 37BF3615\n  C2301D06 03551D0E\
+      \ 04160414 AC573B1C 1359563A 5DB4812D 04E04037 BF3615C2\n  300D0609 2A864886\
+      \ F70D0101 05050003 82010100 814EEDFE 74E23A10 698E4F11\n  EBBFBEA7 A3ADCF0D\
+      \ FE660404 E2C1B777 333FA47B FFAFF6FB 5AC924BB 13AEC766\n  0055AFEB F091F1DA\
+      \ 37C1654F A443EB0A 95B7E3E5 4D340019 9C3A3664 51523759\n  39F603C4 03D10091\
+      \ 3C7458F5 43402655 ABF74675 D75E187E 01A32427 29F1B851\n  03DB244E ADB2BEE6\
+      \ 9DA5F117 C5947402 988DBDDA 93AEB8E0 BD7992D9 689D911D\n  EC70D4BF 0E51C812\
+      \ 24624C5E 92A301C8 99F34B1B 5FC0371F 46FA4864 B86EF677\n  ACEF2274 36A2AACB\
+      \ 64B8A764 03EBFABA F061D25B B31409B6 1FCE4E33 FEA113B9\n  A64512BF 9FF9C387\
+      \ 7543CDC9 2E4790F6 C3F05801 0BE60C65 E14C4CE3 D0BDA589\n  1BC8860C 511CF356\
+      \ 42262589 8F6AC235 93671DAF\n  \tquit\n!\nlicense udi pid CSR1000V sn 9U5K2EZ3NKZ\n\
+      diagnostic bootup level minimal\nmemory free low-watermark processor 71507\n\
+      !\n!\nspanning-tree extend system-id\n!\nusername cisco privilege 15 secret\
+      \ 9 $9$t3tEqhc9GLL3GE$DKeSQUy9K5ybPcavEZuEWsZLST5zxzzdl4vV2Y9fqhQ\n!\nredundancy\n\
+      !\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n\
+      interface Loopback0\n description Loopback\n ip address 192.168.1.134 255.255.255.255\n\
+      \ isis circuit-type level-2-only\n!\ninterface Tunnel13413\n description to\
+      \ d113\n ip unnumbered Loopback0\n mpls traffic-eng tunnels\n tunnel mode mpls\
+      \ traffic-eng\n tunnel destination 192.168.1.113\n tunnel mpls traffic-eng autoroute\
+      \ announce\n tunnel mpls traffic-eng path-option 10 dynamic\n!\ninterface Tunnel13414\n\
+      \ description to d114\n ip unnumbered Loopback0\n mpls traffic-eng tunnels\n\
+      \ tunnel mode mpls traffic-eng\n tunnel destination 192.168.1.114\n tunnel mpls\
+      \ traffic-eng autoroute announce\n tunnel mpls traffic-eng path-option 10 dynamic\n\
+      !\ninterface GigabitEthernet1\n description OOB Management\n ip address 198.18.1.134\
+      \ 255.255.255.0\n negotiation auto\n cdp enable\n no mop enabled\n no mop sysid\n\
+      !\ninterface GigabitEthernet2\n description to p104\n ip address 10.0.0.66 255.255.255.252\n\
+      \ ip router isis ISIS\n negotiation auto\n cdp enable\n mpls traffic-eng tunnels\n\
+      \ no mop enabled\n no mop sysid\n isis circuit-type level-2-only\n isis network\
+      \ point-to-point\n isis metric 1020 level-1\n isis metric 1020 level-2\n no\
+      \ isis hello padding\n ip rsvp bandwidth\n!\ninterface GigabitEthernet3\n description\
+      \ to p103\n ip address 10.0.0.54 255.255.255.252\n ip router isis ISIS\n negotiation\
+      \ auto\n cdp enable\n mpls traffic-eng tunnels\n no mop enabled\n no mop sysid\n\
+      \ isis circuit-type level-2-only\n isis network point-to-point\n isis metric\
+      \ 1030 level-1\n isis metric 1030 level-2\n no isis hello padding\n ip rsvp\
+      \ bandwidth\n!\nrouter isis ISIS\n net 49.0001.1921.6800.1134.00\n is-type level-2-only\n\
+      \ advertise passive-only\n metric-style wide\n passive-interface Loopback0\n\
+      \ mpls traffic-eng router-id Loopback0\n mpls traffic-eng level-2\n!\nip forward-protocol\
+      \ nd\nno ip http server\nip http authentication local\nip http secure-server\n\
+      ip http client source-interface GigabitEthernet1\n!\nip tftp source-interface\
+      \ GigabitEthernet1\nip route 10.16.0.0 255.255.0.0 198.18.1.1\nip route 10.64.0.0\
+      \ 255.255.0.0 198.18.1.1\nip route 198.18.128.0 255.255.192.0 198.18.1.1\nip\
+      \ ssh version 2\n!\n!\n!\n!\n!\n!\n!\ncontrol-plane\n!\n!\n!\n!\n!\nalias exec\
+      \ up show ip interface brief | include up\nalias exec tun show mpls traffic-eng\
+      \ tunnels brief\nalias exec topo show isis topology\n!\nline con 0\n exec-timeout\
+      \ 0 0\n logging synchronous\n stopbits 1\nline vty 0 4\n exec-timeout 12 0\n\
+      \ login local\n transport input ssh\n!\ncall-home\n ! If contact email address\
+      \ in call-home is configured as sch-smart-licensing@cisco.com\n ! the email\
+      \ address configured in Cisco Smart License Portal will be used as contact email\
+      \ address to send SCH notifications.\n contact-email-addr sch-smart-licensing@cisco.com\n\
+      \ profile \"CiscoTAC-1\"\n  active\n  destination transport-method http\nnetconf\
+      \ ssh\n!\n!\n!\n!\n!\nend"
+    cpu_limit: 40
+    tags: []
+    interfaces:
+      - id: i0
+        slot: 0
+        label: GigabitEthernet1
+        type: physical
+      - id: i1
+        slot: 1
+        label: GigabitEthernet2
+        type: physical
+      - id: i2
+        slot: 2
+        label: GigabitEthernet3
+        type: physical
+  - id: n8
+    label: s112
+    node_definition: csr1000v
+    x: -200
+    y: 350
+    configuration: "Building configuration...\n\nCurrent configuration : 7911 bytes\n\
+      !\n! Last configuration change at 17:46:29 UTC Mon Mar 29 2021\n!\nversion 17.3\n\
+      service timestamps debug datetime msec\nservice timestamps log datetime msec\n\
+      service call-home\nplatform qfp utilization monitor load 80\nplatform punt-keepalive\
+      \ disable-kernel-core\nplatform console serial\n!\nhostname s112\n!\nboot-start-marker\n\
+      boot-end-marker\n!\n!\nno logging console\nenable secret 9 $9$6Hk55l4HGEfL4k$DEDCq5ZBu8fPtwOa1nJPNH2s4cm4.LagZ4MTmV51o1E\n\
+      !\nno aaa new-model\n!\n!\n!\n!\n!\n!\n!\nno ip domain lookup\nip domain name\
+      \ virl.info\n!\n!\n!\nlogin on-success log\n!\n!\n!\n!\n!\n!\n!\nsubscriber\
+      \ templating\n!\n!\n!\n!\n!\n!\nmpls traffic-eng tunnels\nmultilink bundle-name\
+      \ authenticated\n!\ndomain virl.info\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n\
+      !\ncrypto pki trustpoint SLA-TrustPoint\n enrollment pkcs12\n revocation-check\
+      \ crl\n!\ncrypto pki trustpoint TP-self-signed-3357709647\n enrollment selfsigned\n\
+      \ subject-name cn=IOS-Self-Signed-Certificate-3357709647\n revocation-check\
+      \ none\n rsakeypair TP-self-signed-3357709647\n!\n!\ncrypto pki certificate\
+      \ chain SLA-TrustPoint\n certificate ca 01\n  30820321 30820209 A0030201 02020101\
+      \ 300D0609 2A864886 F70D0101 0B050030\n  32310E30 0C060355 040A1305 43697363\
+      \ 6F312030 1E060355 04031317 43697363\n  6F204C69 63656E73 696E6720 526F6F74\
+      \ 20434130 1E170D31 33303533 30313934\n  3834375A 170D3338 30353330 31393438\
+      \ 34375A30 32310E30 0C060355 040A1305\n  43697363 6F312030 1E060355 04031317\
+      \ 43697363 6F204C69 63656E73 696E6720\n  526F6F74 20434130 82012230 0D06092A\
+      \ 864886F7 0D010101 05000382 010F0030\n  82010A02 82010100 A6BCBD96 131E05F7\
+      \ 145EA72C 2CD686E6 17222EA1 F1EFF64D\n  CBB4C798 212AA147 C655D8D7 9471380D\
+      \ 8711441E 1AAF071A 9CAE6388 8A38E520\n  1C394D78 462EF239 C659F715 B98C0A59\
+      \ 5BBB5CBD 0CFEBEA3 700A8BF7 D8F256EE\n  4AA4E80D DB6FD1C9 60B1FD18 FFC69C96\
+      \ 6FA68957 A2617DE7 104FDC5F EA2956AC\n  7390A3EB 2B5436AD C847A2C5 DAB553EB\
+      \ 69A9A535 58E9F3E3 C0BD23CF 58BD7188\n  68E69491 20F320E7 948E71D7 AE3BCC84\
+      \ F10684C7 4BC8E00F 539BA42B 42C68BB7\n  C7479096 B4CB2D62 EA2F505D C7B062A4\
+      \ 6811D95B E8250FC4 5D5D5FB8 8F27D191\n  C55F0D76 61F9A4CD 3D992327 A8BB03BD\
+      \ 4E6D7069 7CBADF8B DF5F4368 95135E44\n  DFC7C6CF 04DD7FD1 02030100 01A34230\
+      \ 40300E06 03551D0F 0101FF04 04030201\n  06300F06 03551D13 0101FF04 05300301\
+      \ 01FF301D 0603551D 0E041604 1449DC85\n  4B3D31E5 1B3E6A17 606AF333 3D3B4C73\
+      \ E8300D06 092A8648 86F70D01 010B0500\n  03820101 00507F24 D3932A66 86025D9F\
+      \ E838AE5C 6D4DF6B0 49631C78 240DA905\n  604EDCDE FF4FED2B 77FC460E CD636FDB\
+      \ DD44681E 3A5673AB 9093D3B1 6C9E3D8B\n  D98987BF E40CBD9E 1AECA0C2 2189BB5C\
+      \ 8FA85686 CD98B646 5575B146 8DFC66A8\n  467A3DF4 4D565700 6ADF0F0D CF835015\
+      \ 3C04FF7C 21E878AC 11BA9CD2 55A9232C\n  7CA7B7E6 C1AF74F6 152E99B7 B1FCF9BB\
+      \ E973DE7F 5BDDEB86 C71E3B49 1765308B\n  5FB0DA06 B92AFE7F 494E8A9E 07B85737\
+      \ F3A58BE1 1A48A229 C37C1E69 39F08678\n  80DDCD16 D6BACECA EEBC7CF9 8428787B\
+      \ 35202CDC 60E4616A B623CDBD 230E3AFB\n  418616A9 4093E049 4D10AB75 27E86F73\
+      \ 932E35B5 8862FDAE 0275156F 719BB2F0\n  D697DF7F 28\n  \tquit\ncrypto pki certificate\
+      \ chain TP-self-signed-3357709647\n certificate self-signed 01\n  30820330 30820218\
+      \ A0030201 02020101 300D0609 2A864886 F70D0101 05050030\n  31312F30 2D060355\
+      \ 04031326 494F532D 53656C66 2D536967 6E65642D 43657274\n  69666963 6174652D\
+      \ 33333537 37303936 3437301E 170D3231 30333239 31373232\n  30355A17 0D333130\
+      \ 33323931 37323230 355A3031 312F302D 06035504 03132649\n  4F532D53 656C662D\
+      \ 5369676E 65642D43 65727469 66696361 74652D33 33353737\n  30393634 37308201\
+      \ 22300D06 092A8648 86F70D01 01010500 0382010F 00308201\n  0A028201 0100A3EE\
+      \ 32D9C475 7F804865 7A44C056 9FE76927 1F4ECAE5 BA8ABC30\n  3780D4CD 6B9A9EC5\
+      \ 4B8E0D1C 87BFF6B5 2A66971F 4EE71D14 C2CC3717 2E344DEB\n  E785E174 E3201363\
+      \ F690114E EF3B0B2E BD75A18B EAFD6CFE 7CF4C3A7 C61270D3\n  5CCF1FFC 1DC3B92D\
+      \ 4FBCE735 E0E70F77 389B33D3 1E86F978 8F417BDD D5E10A0E\n  7C350AC4 48E90F76\
+      \ 43CC8DBD 7255C862 F8442DD5 DD78CDBA 87CDB50F 6D5CE8C2\n  1EF80701 18C4D2DD\
+      \ 7F56C87F 2C009B57 E4DCC2F2 FCD4CB00 D09C62A5 93607D74\n  89AF8E1B ED4753EE\
+      \ 943DCC2C 731055DE 10CECAAE 7696AF6E 93AEE1CA C4E24C73\n  1D3AA4E7 E2D247D6\
+      \ DF47BF54 6B2321B0 95161EAA AED272BA 4709239C 738A63E3\n  BEDC8871 B4290203\
+      \ 010001A3 53305130 0F060355 1D130101 FF040530 030101FF\n  301F0603 551D2304\
+      \ 18301680 14E8C557 5B99110F C5F5E02E AA4C0004 43693A2F\n  78301D06 03551D0E\
+      \ 04160414 E8C5575B 99110FC5 F5E02EAA 4C000443 693A2F78\n  300D0609 2A864886\
+      \ F70D0101 05050003 82010100 403DE79A 2CAAA0CF 1BBC4458\n  EC710EC6 8174B060\
+      \ FDB080DA 417BA4C7 B8B63697 431A369A 556D6FF3 26F13737\n  548D0F97 F5C0537D\
+      \ C54B9400 5F932CE3 C9318579 EC89EE7C 1CF36366 71D012C6\n  4FFA54B2 5EDBD71E\
+      \ 891027C8 3CEA7699 6CAC0A58 036F13F5 54C65C64 D6A5C9C3\n  B737728C EDAE3ED0\
+      \ 2A179B42 12322625 D907711B B53FD38A 06BFCFF3 5A1BDC9B\n  27CE3E09 6DBB8407\
+      \ B3618F6F 86F38F39 D6ADE0CC 197E9B14 A4493E1A 5432BF95\n  25B5C93E 98C60911\
+      \ 158D6DE5 1672FDA9 DF448E48 EB1960EA D984EEF5 FECEDF73\n  4EE252E8 2640D622\
+      \ 8B344ED5 267A0B1A CF458F6C 087523DA 17787D72 CA18E63F\n  E8CEFE9A 6470926F\
+      \ E92C9E84 8B496D49 2FB1E3CE\n  \tquit\n!\nlicense udi pid CSR1000V sn 938UA8NGUAP\n\
+      diagnostic bootup level minimal\nmemory free low-watermark processor 72301\n\
+      !\n!\nspanning-tree extend system-id\n!\nusername cisco privilege 15 secret\
+      \ 9 $9$uvpZL58WxCvOrU$ZLO4P9F/jbLApDeC85JlptsGI/HmotjdjfZupQ1pjtM\n!\nredundancy\n\
+      !\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n\
+      interface Loopback0\n description Loopback\n ip address 192.168.1.112 255.255.255.255\n\
+      \ isis circuit-type level-2-only\n!\ninterface Tunnel11213\n description to\
+      \ d113\n ip unnumbered Loopback0\n mpls traffic-eng tunnels\n tunnel mode mpls\
+      \ traffic-eng\n tunnel destination 192.168.1.113\n tunnel mpls traffic-eng autoroute\
+      \ announce\n tunnel mpls traffic-eng path-option 10 dynamic\n!\ninterface Tunnel11214\n\
+      \ description to d114\n ip unnumbered Loopback0\n mpls traffic-eng tunnels\n\
+      \ tunnel mode mpls traffic-eng\n tunnel destination 192.168.1.114\n tunnel mpls\
+      \ traffic-eng autoroute announce\n tunnel mpls traffic-eng path-option 10 dynamic\n\
+      !\ninterface GigabitEthernet1\n description OOB Management\n ip address 198.18.1.112\
+      \ 255.255.255.0\n negotiation auto\n cdp enable\n no mop enabled\n no mop sysid\n\
+      !\ninterface GigabitEthernet2\n description to p102\n ip address 10.0.0.30 255.255.255.252\n\
+      \ ip router isis ISIS\n negotiation auto\n cdp enable\n mpls traffic-eng tunnels\n\
+      \ no mop enabled\n no mop sysid\n isis circuit-type level-2-only\n isis network\
+      \ point-to-point\n isis metric 1010 level-1\n isis metric 1010 level-2\n no\
+      \ isis hello padding\n ip rsvp bandwidth\n!\ninterface GigabitEthernet3\n description\
+      \ to p101\n ip address 10.0.0.14 255.255.255.252\n ip router isis ISIS\n negotiation\
+      \ auto\n cdp enable\n mpls traffic-eng tunnels\n no mop enabled\n no mop sysid\n\
+      \ isis circuit-type level-2-only\n isis network point-to-point\n isis metric\
+      \ 1000 level-2\n no isis hello padding\n ip rsvp bandwidth\n!\nrouter isis ISIS\n\
+      \ net 49.0001.1921.6800.1112.00\n is-type level-2-only\n advertise passive-only\n\
+      \ metric-style wide\n passive-interface Loopback0\n mpls traffic-eng router-id\
+      \ Loopback0\n mpls traffic-eng level-2\n!\nip forward-protocol nd\nno ip http\
+      \ server\nip http authentication local\nip http secure-server\nip http client\
+      \ source-interface GigabitEthernet1\n!\nip tftp source-interface GigabitEthernet1\n\
+      ip route 10.16.0.0 255.255.0.0 198.18.1.1\nip route 10.64.0.0 255.255.0.0 198.18.1.1\n\
+      ip route 198.18.128.0 255.255.192.0 198.18.1.1\nip ssh version 2\n!\n!\n!\n\
+      !\n!\n!\n!\ncontrol-plane\n!\n!\n!\n!\n!\nalias exec up show ip interface brief\
+      \ | include up\nalias exec tun show mpls traffic-eng tunnels brief\nalias exec\
+      \ topo show isis topology\n!\nline con 0\n exec-timeout 0 0\n stopbits 1\nline\
+      \ vty 0 4\n exec-timeout 12 0\n login local\n transport input ssh\n!\ncall-home\n\
+      \ ! If contact email address in call-home is configured as sch-smart-licensing@cisco.com\n\
+      \ ! the email address configured in Cisco Smart License Portal will be used\
+      \ as contact email address to send SCH notifications.\n contact-email-addr sch-smart-licensing@cisco.com\n\
+      \ profile \"CiscoTAC-1\"\n  active\n  destination transport-method http\nnetconf\
+      \ ssh\n!\n!\n!\n!\n!\nend"
+    cpu_limit: 40
+    tags: []
+    interfaces:
+      - id: i0
+        slot: 0
+        label: GigabitEthernet1
+        type: physical
+      - id: i1
+        slot: 1
+        label: GigabitEthernet2
+        type: physical
+      - id: i2
+        slot: 2
+        label: GigabitEthernet3
+        type: physical
+  - id: n9
+    label: p101
+    node_definition: iosxrv
+    x: -100
+    y: 150
+    configuration: |2-
+
+      Mon Mar 29 17:46:43.901 UTC
+      Building configuration...
+      !! IOS XR Configuration 6.6.3
+      !! Last configuration change at Mon Mar 29 17:46:39 2021 by cisco
+      !
+      !  IOS-XR Config generated on 2021-02-21 03:53
+      ! by autonetkit_0.24.1
+      hostname p101
+      logging console disable
+      service timestamps log datetime msec
+      service timestamps debug datetime msec
+      domain name virl.info
+      domain lookup disable
+      telnet vrf default ipv4 server max-servers 10
+      cdp
+      vrf Mgmt-intf
+       address-family ipv4 unicast
+       !
+      !
+      line template vty
+       timestamp
+       exec-timeout 720 0
+      !
+      line console
+       exec-timeout 0 0
+       absolute-timeout 0
+       session-timeout 0
+      !
+      line default
+       exec-timeout 0 0
+       absolute-timeout 0
+       session-timeout 0
+      !
+      vty-pool default 0 9
+      alias exec up show ipv4 vrf all interface brief | include Up
+      alias exec tun show mpls traffic-eng tunnels tabular
+      alias exec topo show isis topology
+      ipv4 unnumbered mpls traffic-eng Loopback0
+      control-plane
+       management-plane
+        inband
+         interface all
+          allow all
+         !
+         interface Loopback0
+         !
+        !
+       !
+      !
+      interface Loopback0
+       description Loopback
+       ipv4 address 192.168.0.101 255.255.255.255
+      !
+      interface MgmtEth0/0/CPU0/0
+       description OOB Management
+       cdp
+       vrf Mgmt-intf
+       ipv4 address 198.18.1.101 255.255.255.0
+      !
+      interface GigabitEthernet0/0/0/0
+       description to p102
+       cdp
+       ipv4 address 10.0.0.5 255.255.255.252
+      !
+      interface GigabitEthernet0/0/0/1
+       description to d114
+       cdp
+       ipv4 address 10.0.0.21 255.255.255.252
+      !
+      interface GigabitEthernet0/0/0/2
+       description to d113
+       cdp
+       ipv4 address 10.0.0.17 255.255.255.252
+      !
+      interface GigabitEthernet0/0/0/3
+       description to s112
+       cdp
+       ipv4 address 10.0.0.13 255.255.255.252
+      !
+      interface GigabitEthernet0/0/0/4
+       description to p104
+       cdp
+       ipv4 address 10.0.0.9 255.255.255.252
+      !
+      interface GigabitEthernet0/0/0/5
+       cdp
+       shutdown
+      !
+      router static
+       vrf Mgmt-intf
+        address-family ipv4 unicast
+         10.16.0.0/16 198.18.1.1
+         10.64.0.0/16 198.18.1.1
+         198.18.128.0/18 198.18.1.1
+        !
+       !
+      !
+      router isis ISIS
+       is-type level-2-only
+       net 49.0001.1921.6800.0101.00
+       address-family ipv4 unicast
+        metric-style wide
+        advertise passive-only
+        mpls traffic-eng level-2-only
+        mpls traffic-eng router-id Loopback0
+       !
+       interface Loopback0
+        passive
+        address-family ipv4 unicast
+        !
+       !
+       interface GigabitEthernet0/0/0/0
+        point-to-point
+        hello-padding disable
+        address-family ipv4 unicast
+         metric 100
+        !
+       !
+       interface GigabitEthernet0/0/0/1
+        point-to-point
+        hello-padding disable
+        address-family ipv4 unicast
+         metric 1010
+        !
+       !
+       interface GigabitEthernet0/0/0/2
+        point-to-point
+        hello-padding disable
+        address-family ipv4 unicast
+         metric 1020
+        !
+       !
+       interface GigabitEthernet0/0/0/3
+        point-to-point
+        hello-padding disable
+        address-family ipv4 unicast
+         metric 1030
+        !
+       !
+       interface GigabitEthernet0/0/0/4
+        point-to-point
+        hello-padding disable
+        address-family ipv4 unicast
+         metric 104
+        !
+       !
+      !
+      mpls oam
+      !
+      rsvp
+       interface GigabitEthernet0/0/0/0
+       !
+       interface GigabitEthernet0/0/0/1
+       !
+       interface GigabitEthernet0/0/0/2
+       !
+       interface GigabitEthernet0/0/0/3
+       !
+       interface GigabitEthernet0/0/0/4
+       !
+      !
+      mpls traffic-eng
+       interface GigabitEthernet0/0/0/0
+       !
+       interface GigabitEthernet0/0/0/1
+       !
+       interface GigabitEthernet0/0/0/2
+       !
+       interface GigabitEthernet0/0/0/3
+       !
+       interface GigabitEthernet0/0/0/4
+       !
+      !
+      netconf-yang agent
+       ssh
+      !
+      ssh server v2
+      ssh server vrf Mgmt-intf
+      end
+    image_definition: xrv-663
+    cpu_limit: 40
+    tags: []
+    interfaces:
+      - id: i0
+        slot: 0
+        label: MgmtEth0/0/CPU0/0
+        type: physical
+      - id: i1
+        slot: 1
+        label: GigabitEthernet0/0/0/0
+        type: physical
+      - id: i2
+        slot: 2
+        label: GigabitEthernet0/0/0/1
+        type: physical
+      - id: i3
+        slot: 3
+        label: GigabitEthernet0/0/0/2
+        type: physical
+      - id: i4
+        slot: 4
+        label: GigabitEthernet0/0/0/3
+        type: physical
+      - id: i5
+        slot: 5
+        label: GigabitEthernet0/0/0/4
+        type: physical
+      - id: i6
+        slot: 6
+        label: GigabitEthernet0/0/0/5
+        type: physical
+  - id: n10
+    label: ext-conn-0
+    node_definition: external_connector
+    x: -350
+    y: 100
+    configuration: bridge1
+    tags: []
+    interfaces:
+      - id: i0
+        slot: 0
+        label: port
+        type: physical
+  - id: n11
+    label: Mgmt net 0
+    node_definition: unmanaged_switch
+    x: -350
+    y: 200
+    configuration: ''
+    tags: []
+    interfaces:
+      - id: i0
+        slot: 0
+        label: port0
+        type: physical
+      - id: i1
+        slot: 1
+        label: port1
+        type: physical
+      - id: i2
+        slot: 2
+        label: port2
+        type: physical
+      - id: i3
+        slot: 3
+        label: port3
+        type: physical
+      - id: i4
+        slot: 4
+        label: port4
+        type: physical
+      - id: i5
+        slot: 5
+        label: port5
+        type: physical
+      - id: i6
+        slot: 6
+        label: port6
+        type: physical
+      - id: i7
+        slot: 7
+        label: port7
+        type: physical
+  - id: n12
+    label: Mgmt net 1
+    node_definition: unmanaged_switch
+    x: -350
+    y: 250
+    configuration: ''
+    tags: []
+    interfaces:
+      - id: i0
+        slot: 0
+        label: port0
+        type: physical
+      - id: i1
+        slot: 1
+        label: port1
+        type: physical
+      - id: i2
+        slot: 2
+        label: port2
+        type: physical
+      - id: i3
+        slot: 3
+        label: port3
+        type: physical
+      - id: i4
+        slot: 4
+        label: port4
+        type: physical
+      - id: i5
+        slot: 5
+        label: port5
+        type: physical
+      - id: i6
+        slot: 6
+        label: port6
+        type: physical
+      - id: i7
+        slot: 7
+        label: port7
+        type: physical
+links:
+  - id: l0
+    i1: i2
+    n1: n0
+    i2: i1
+    n2: n1
+  - id: l1
+    i1: i2
+    n1: n1
+    i2: i1
+    n2: n2
+  - id: l2
+    i1: i1
+    n1: n7
+    i2: i2
+    n2: n2
+  - id: l3
+    i1: i2
+    n1: n6
+    i2: i3
+    n2: n0
+  - id: l4
+    i1: i4
+    n1: n3
+    i2: i5
+    n2: n1
+  - id: l5
+    i1: i2
+    n1: n7
+    i2: i6
+    n2: n1
+  - id: l6
+    i1: i3
+    n1: n2
+    i2: i1
+    n2: n6
+  - id: l7
+    i1: i2
+    n1: n5
+    i2: i4
+    n2: n0
+  - id: l8
+    i1: i6
+    n1: n2
+    i2: i3
+    n2: n4
+  - id: l9
+    i1: i1
+    n1: n5
+    i2: i3
+    n2: n1
+  - id: l10
+    i1: i1
+    n1: n9
+    i2: i1
+    n2: n0
+  - id: l11
+    i1: i4
+    n1: n4
+    i2: i2
+    n2: n9
+  - id: l12
+    i1: i3
+    n1: n3
+    i2: i3
+    n2: n9
+  - id: l13
+    i1: i5
+    n1: n9
+    i2: i4
+    n2: n2
+  - id: l14
+    i1: i2
+    n1: n8
+    i2: i4
+    n2: n9
+  - id: l15
+    i1: i1
+    n1: n8
+    i2: i5
+    n2: n0
+  - id: l16
+    i1: i0
+    n1: n10
+    i2: i0
+    n2: n11
+  - id: l18
+    i1: i0
+    n1: n9
+    i2: i2
+    n2: n11
+  - id: l20
+    i1: i0
+    n1: n3
+    i2: i4
+    n2: n11
+  - id: l22
+    i1: i0
+    n1: n0
+    i2: i6
+    n2: n11
+  - id: l17
+    i1: i0
+    n1: n8
+    i2: i1
+    n2: n11
+  - id: l19
+    i1: i0
+    n1: n5
+    i2: i3
+    n2: n11
+  - id: l21
+    i1: i0
+    n1: n12
+    i2: i5
+    n2: n11
+  - id: l23
+    i1: i0
+    n1: n4
+    i2: i1
+    n2: n12
+  - id: l24
+    i1: i0
+    n1: n1
+    i2: i2
+    n2: n12
+  - id: l25
+    i1: i0
+    n1: n2
+    i2: i3
+    n2: n12
+  - id: l26
+    i1: i0
+    n1: n6
+    i2: i4
+    n2: n12
+  - id: l27
+    i1: i0
+    n1: n7
+    i2: i5
+    n2: n12

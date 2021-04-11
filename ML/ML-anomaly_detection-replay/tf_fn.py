@@ -246,12 +246,13 @@ def train_nn_regression_model(
     # print(validation_predictions.mean())
     # print(validation_targets.max().mean())
     # validation plot for each dimension
-    fig = plt.figure(1, figsize=[14, 7])
-    fig.clear()
-    fig.suptitle('bytes-sent count vs. records', fontsize=16)
+    fig1 = plt.figure(1, figsize=[14, 7])
+    fig1.clear()
+    fig1.set_facecolor(fig_color)
+    fig1.suptitle('bytes-sent count vs. records', fontsize=16)
     fig_rows = 3
     fig_cols = int((len(tunnel_ifs) + len(physical_ifs)) / fig_rows)
-    ifs_plots = fig.subplots(fig_rows, fig_cols, sharex='all', gridspec_kw={'hspace':0.1, 'wspace':0.3, 'left':0.04, 'right':0.99, 'top':0.93, 'bottom':0.03})
+    ifs_plots = fig1.subplots(fig_rows, fig_cols, sharex='all', gridspec_kw={'hspace':0.1, 'wspace':0.3, 'left':0.04, 'right':0.99, 'top':0.93, 'bottom':0.03})
     # plt.ylabel("bytes-sent")
     # plt.xlabel("records")
     for dim in range(0, len(tunnel_ifs) + len(physical_ifs)):
@@ -265,7 +266,8 @@ def train_nn_regression_model(
     plt.pause(0.0001)
 
     # graph of loss metrics over periods
-    plt.figure(2, figsize=[10, 4])
+    fig2 = plt.figure(2, figsize=[10, 4])
+    fig2.set_facecolor(fig_color)
     plt.ylabel("RMSE (log scale)")
     plt.xlabel("Periods")
     plt.title("Root Mean Squared Error vs. Periods")
@@ -274,14 +276,15 @@ def train_nn_regression_model(
     plt.plot(range(x_periods - 10, x_periods), training_rmse, 'm')
     plt.plot(range(x_periods - 10, x_periods), validation_rmse, 'r')
     plt.plot(x_periods - 1, validation_rmse[len(validation_rmse) - 1], 'b*')
-    plt.legend(["training", "validation", "prediction"])
+    plt.figlegend(["training", "validation", "prediction"], loc='upper left')
     if not prediction:
         plt.plot(x_periods - 1, validation_rmse[len(validation_rmse) - 1], 'r*')
     plt.grid(True, which='both', axis='both')
     plt.pause(0.0001)
  
     # graph of normalized loss metrics over periods
-    plt.figure(3, figsize=[10, 4])
+    fig3 = plt.figure(3, figsize=[10, 4])
+    fig3.set_facecolor(fig_color)
     plt.ylabel("NRMSE")
     plt.xlabel("Periods")
     plt.title("Prediction RMSE/mean vs. Periods")
@@ -291,7 +294,7 @@ def train_nn_regression_model(
     plt.plot(range(x_periods - 10, x_periods), validation_rmse / validation_targets.mean().mean(), 'g')
     plt.plot(x_periods - 1, validation_rmse[len(validation_rmse) - 1] / validation_predictions.mean(), 'b*')
     plt.plot(x_periods - 1, validation_rmse[len(validation_rmse) - 1] / validation_targets.mean().mean(), 'g*')
-    plt.legend(["/prediction", "/actual"])
+    plt.figlegend(["/prediction", "/actual"], loc='upper left')
     plt.grid(True, which='both', axis='both')
     plt.pause(0.0001)
 

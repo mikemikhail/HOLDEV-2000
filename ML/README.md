@@ -1,10 +1,10 @@
 # ML-anomaly_detection-demo
 
-This Repo is to accompany the Cisco Live HOLDEV-2000 lab sessions.
+This Repo is to accompany the Cisco Live HOLSPG-2400 lab sessions.
 
 First clone the repo with 
 
-$ git clone https://github.com/mikemikhail/HOLDEV-2000 
+$ git clone https://github.com/mikemikhail/HOLSPG-2400/
 
 Install the requirements:
 

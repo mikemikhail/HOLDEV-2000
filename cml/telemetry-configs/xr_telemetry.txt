@@ -1,0 +1,60 @@
+
+
+telemetry model-driven
+ destination-group COLLECTOR
+  vrf Mgmt-intf
+  address-family ipv4 198.18.134.28 port 50002
+   encoding self-describing-gpb
+   protocol tcp
+  !
+ !
+ sensor-group TRAFFIC
+  sensor-path Cisco-IOS-XR-infra-statsd-oper:infra-statistics/interfaces/interface/latest/generic-counters
+ !
+ subscription ANALYTICS
+  sensor-group-id TRAFFIC sample-interval 30000
+  destination-id COLLECTOR
+ !
+!
+ sensor-group health
+  sensor-path Cisco-IOS-XR-wdsysmon-fd-oper:system-monitoring/cpu-utilization
+  sensor-path Cisco-IOS-XR-nto-misc-shmem-oper:memory-summary/nodes/node/summary
+  sensor-path Cisco-IOS-XR-shellutil-oper:system-time/uptime
+ !
+ sensor-group interfaces
+  sensor-path Cisco-IOS-XR-pfi-im-cmd-oper:interfaces/interface-summary
+ !
+ !
+ sensor-group routing
+  sensor-path Cisco-IOS-XR-clns-isis-oper:isis/instances/instance/levels/level/adjacencies/adjacency
+  sensor-path Cisco-IOS-XR-clns-isis-oper:isis/instances/instance/statistics-global
+  sensor-path Cisco-IOS-XR-ip-rib-ipv4-oper:rib/vrfs/vrf/afs/af/safs/saf/ip-rib-route-table-names/ip-rib-route-table-name/protocol/isis/as/information
+  sensor-path Cisco-IOS-XR-ipv4-bgp-oper:bgp/instances/instance/instance-active/default-vrf/process-info
+ !
+ sensor-group mpls-te
+ sensor-path Cisco-IOS-XR-mpls-te-oper:mpls-te/tunnels/summary
+ sensor-path Cisco-IOS-XR-ip-rsvp-oper:rsvp/interface-briefs/interface-brief
+ sensor-path Cisco-IOS-XR-ip-rsvp-oper:rsvp/counters/interface-messages/interface-message
+ 
+  subscription health
+  sensor-group-id health strict-timer
+  sensor-group-id health sample-interval 60000
+  destination-id COLLECTOR
+ !
+ subscription interfaces
+  sensor-group-id interfaces strict-timer
+  sensor-group-id interfaces sample-interval 60000
+  destination-id COLLECTOR
+ !
+
+ !
+ subscription routing
+  sensor-group-id routing strict-timer
+  sensor-group-id routing sample-interval 60000
+  destination-id COLLECTOR
+ !
+ subscription mpls-te
+  sensor-group-id mpls-te strict-timer
+  sensor-group-id mpls-te sample-interval 60000
+  destination-id COLLECTOR
+  

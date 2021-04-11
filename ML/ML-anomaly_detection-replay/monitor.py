@@ -58,7 +58,7 @@ elif weekday == 5:
 else:
     previous = '1d'
 
-if is_demo:
+if is_replay:
     previous = '1d'
 
 if not os.path.exists(model_directory):
@@ -127,7 +127,7 @@ while True:
     else:
         previous = '1d'
 
-    if is_demo:
+    if is_replay:
         previous = '1d'
 
     # if there're pecularities in the 60 minutes data slices, 

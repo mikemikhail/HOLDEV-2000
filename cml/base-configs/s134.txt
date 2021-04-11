@@ -1,0 +1,238 @@
+Building configuration...
+
+Current configuration : 6250 bytes
+!
+! Last configuration change at 02:02:45 UTC Sat Mar 27 2021
+!
+version 17.3
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service call-home
+platform qfp utilization monitor load 80
+platform punt-keepalive disable-kernel-core
+platform console serial
+!
+hostname s134
+!
+boot-start-marker
+boot-end-marker
+!
+!
+no vrf definition Mgmt-intf
+ !
+
+!         
+enable secret 9 $9$Iop6phoCcC9ITU$eL.2kJQgIDotzBiIcPs.ohvcalRqDkv5nUhwwENjKQI
+!
+no aaa new-model
+!
+!
+!
+!
+!
+!
+!
+no ip domain lookup
+!
+ip domain name virl.info
+
+!
+!
+login on-success log
+!
+!
+!
+!
+!
+!
+!
+subscriber templating
+! 
+! 
+! 
+! 
+!
+!
+mpls traffic-eng tunnels
+multilink bundle-name authenticated
+!
+domain virl.info
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+! 
+diagnostic bootup level minimal
+memory free low-watermark processor 71507
+!
+!
+spanning-tree extend system-id
+!
+username cisco privilege 15 secret 9 $9$t3tEqhc9GLL3GE$DKeSQUy9K5ybPcavEZuEWsZLST5zxzzdl4vV2Y9fqhQ
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+! 
+!
+!
+!
+!
+!         
+!
+!
+!
+!
+!
+!
+!
+!
+! 
+! 
+!
+!
+interface Loopback0
+ description Loopback
+ ip address 192.168.1.134 255.255.255.255
+ isis circuit-type level-2-only
+!
+interface Tunnel13413
+description to d113
+ ip unnumbered Loopback0
+ mpls traffic-eng tunnels
+ tunnel mode mpls traffic-eng
+ tunnel destination 192.168.1.113
+ tunnel mpls traffic-eng autoroute announce
+ tunnel mpls traffic-eng path-option 10 dynamic
+!
+interface Tunnel13414
+description to d114
+ ip unnumbered Loopback0
+ mpls traffic-eng tunnels
+ tunnel mode mpls traffic-eng
+ tunnel destination 192.168.1.114
+ tunnel mpls traffic-eng autoroute announce
+ tunnel mpls traffic-eng path-option 10 dynamic
+!
+interface GigabitEthernet1
+description OOB Management
+ ip address 198.18.1.134 255.255.255.0
+ no shutdown
+ negotiation auto
+ cdp enable
+ no mop enabled
+ no mop sysid
+!
+interface GigabitEthernet2
+ description to p104
+ ip address 10.0.0.66 255.255.255.252
+ ip router isis ISIS
+ negotiation auto
+ cdp enable
+ mpls traffic-eng tunnels
+ no mop enabled
+ no mop sysid
+ isis circuit-type level-2-only
+ isis network point-to-point 
+ isis metric 1020 level-1
+ isis metric 1020 level-2
+ no isis hello padding
+ ip rsvp bandwidth
+!
+interface GigabitEthernet3
+ description to p103
+ ip address 10.0.0.54 255.255.255.252
+ ip router isis ISIS
+ negotiation auto
+ cdp enable
+ mpls traffic-eng tunnels
+ no mop enabled
+ no mop sysid
+ isis circuit-type level-2-only
+ isis network point-to-point 
+ isis metric 1030 level-1
+ isis metric 1030 level-2
+ no isis hello padding
+ ip rsvp bandwidth
+!
+router isis ISIS
+ net 49.0001.1921.6800.1134.00
+ is-type level-2-only
+ advertise passive-only
+ metric-style wide
+ passive-interface Loopback0
+ mpls traffic-eng router-id Loopback0
+ mpls traffic-eng level-2
+!
+no router bgp 1
+
+
+!
+ip forward-protocol nd
+no ip http server
+ip http authentication local
+ip http secure-server
+ip http client source-interface GigabitEthernet1
+!
+ip tftp source-interface GigabitEthernet1
+ip route 10.16.0.0 255.255.0.0 198.18.1.1
+ip route 10.64.0.0 255.255.0.0 198.18.1.1
+ip route 198.18.128.0 255.255.192.0 198.18.1.1
+no ip route vrf Mgmt-intf 10.16.0.0 255.255.0.0 198.18.1.1
+no ip route vrf Mgmt-intf 10.64.0.0 255.255.0.0 198.18.1.1
+no ip route vrf Mgmt-intf 198.18.128.0 255.255.192.0 198.18.1.1
+ip ssh version 2
+!
+!
+!
+!
+!
+!
+!
+control-plane
+!
+!
+!
+!         
+!
+alias exec up show ip interface brief | include up
+alias exec tun show mpls traffic-eng tunnels brief
+alias exec topo show isis topology
+
+!
+line con 0
+ exec-timeout 0 0
+ logging synchronous
+ stopbits 1
+line vty 0 4
+ exec-timeout 12 0
+ login local
+ transport input ssh
+!
+call-home
+ ! If contact email address in call-home is configured as sch-smart-licensing@cisco.com
+ ! the email address configured in Cisco Smart License Portal will be used as contact email address to send SCH notifications.
+ contact-email-addr sch-smart-licensing@cisco.com
+ profile "CiscoTAC-1"
+  active
+  destination transport-method http
+netconf ssh
+!
+!
+!
+!
+!
+end

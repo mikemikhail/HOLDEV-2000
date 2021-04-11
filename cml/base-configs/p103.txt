@@ -1,0 +1,176 @@
+!! IOS XR Configuration 6.6.3
+!! Last configuration change at Sat Mar 27 21:32:02 2021 by cisco
+!
+! by autonetkit_0.24.1
+hostname p103
+service timestamps log datetime msec
+service timestamps debug datetime msec
+domain name virl.info
+domain lookup disable
+telnet vrf default ipv4 server max-servers 10
+telnet vrf Mgmt-intf ipv4 server max-servers 10
+cdp
+vrf Mgmt-intf
+ address-family ipv4 unicast
+ !
+!
+line template vty
+ timestamp
+ exec-timeout 720 0
+!
+line console
+ exec-timeout 0 0
+!
+line default
+ exec-timeout 720 0
+!
+vty-pool default 0 50
+alias exec up show ipv4 vrf all interface brief | include Up
+alias exec tun show mpls traffic-eng tunnels tabular 
+alias exec topo show isis topology 
+ipv4 unnumbered mpls traffic-eng Loopback0
+control-plane
+ management-plane
+  inband
+   interface all
+    allow all
+   !
+   interface Loopback0
+   !
+  !
+ !
+!
+interface Loopback0
+ description Loopback
+ ipv4 address 192.168.0.103 255.255.255.255
+!
+interface MgmtEth0/0/CPU0/0
+ description OOB Management
+ cdp
+ ! Configured on launch
+ vrf Mgmt-intf
+ ipv4 address 198.18.1.103 255.255.255.0
+!
+interface GigabitEthernet0/0/0/0
+ description to p102
+ cdp
+ ipv4 address 10.0.0.26 255.255.255.252
+!
+interface GigabitEthernet0/0/0/1
+ description to p104
+ cdp
+ ipv4 address 10.0.0.41 255.255.255.252
+!
+interface GigabitEthernet0/0/0/2
+ description to r123
+ cdp
+ ipv4 address 10.0.0.49 255.255.255.252
+!
+interface GigabitEthernet0/0/0/3
+ description GigabitEthernet0/0/0/3
+ cdp
+ shutdown
+!
+interface GigabitEthernet0/0/0/4
+ description to r113
+ cdp
+ ipv4 address 10.0.0.45 255.255.255.252
+!
+interface GigabitEthernet0/0/0/5
+ description to r134
+ cdp
+ ipv4 address 10.0.0.53 255.255.255.252
+!
+router static
+ vrf Mgmt-intf
+  address-family ipv4 unicast
+   10.16.0.0/16 198.18.1.1
+   10.64.0.0/16 198.18.1.1
+   198.18.128.0/18 198.18.1.1
+  !
+ !
+!
+router isis ISIS
+ is-type level-2-only
+ net 49.0001.1921.6800.0103.00
+ address-family ipv4 unicast
+  metric-style wide
+  advertise passive-only
+  mpls traffic-eng level-2-only
+  mpls traffic-eng router-id Loopback0
+ !
+ interface Loopback0
+  passive
+  address-family ipv4 unicast
+  !
+ !
+ interface GigabitEthernet0/0/0/0
+  point-to-point
+  hello-padding disable
+  address-family ipv4 unicast
+   metric 100
+  !
+ !
+ interface GigabitEthernet0/0/0/1
+  point-to-point
+  hello-padding disable
+  address-family ipv4 unicast
+   metric 101
+  !
+ !
+ interface GigabitEthernet0/0/0/2
+  point-to-point
+  hello-padding disable
+  address-family ipv4 unicast
+   metric 1020
+  !
+ !
+ interface GigabitEthernet0/0/0/4
+  point-to-point
+  hello-padding disable
+  address-family ipv4 unicast
+   metric 1040
+  !
+ !
+ interface GigabitEthernet0/0/0/5
+  point-to-point
+  hello-padding disable
+  address-family ipv4 unicast
+   metric 1050
+  !
+ !
+!
+mpls oam
+!
+rsvp
+ interface GigabitEthernet0/0/0/0
+ !
+ interface GigabitEthernet0/0/0/1
+ !
+ interface GigabitEthernet0/0/0/2
+ !
+ interface GigabitEthernet0/0/0/4
+ !
+ interface GigabitEthernet0/0/0/5
+ !
+!
+mpls traffic-eng
+ interface GigabitEthernet0/0/0/0
+ !
+ interface GigabitEthernet0/0/0/1
+ !
+ interface GigabitEthernet0/0/0/2
+ !
+ interface GigabitEthernet0/0/0/4
+ !
+ interface GigabitEthernet0/0/0/5
+ !
+!
+netconf-yang agent
+ ssh
+!
+ssh server v2
+ssh server vrf Mgmt-intf
+end
+
+RP/0/0/CPU0:p103#   

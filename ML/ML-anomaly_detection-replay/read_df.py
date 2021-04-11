@@ -87,11 +87,11 @@ def read_validate(record_count, label_prefix, previous, verbose=True):
         validate = pd.concat([validate, read_if], axis=1, sort=False)
         label = str(label_prefix + interface[-7:] + "_1w")
         read_if = read_data('bytes-sent', 'Cisco-IOS-XR-infra-statsd-oper:infra-statistics/interfaces/interface/latest/generic-counters', \
-                query_if, 'time >= now() - {} - 1w - 1h - 1m'.format(previous), 'time <= now()', record_count, label)
+                query_if, 'time >= now() - 1w - 1h - 1m', 'time <= now()', record_count, label)
         validate = pd.concat([validate, read_if], axis=1, sort=False)
         label = str(label_prefix + interface[-7:] + "_2w")
         read_if = read_data('bytes-sent', 'Cisco-IOS-XR-infra-statsd-oper:infra-statistics/interfaces/interface/latest/generic-counters', \
-                query_if, 'time >= now() - {} - 2w - 1h - 1m'.format(previous), 'time <= now()', record_count, label)
+                query_if, 'time >= now() - 2w - 1h - 1m', 'time <= now()', record_count, label)
         validate = pd.concat([validate, read_if], axis=1, sort=False)
     validate.fillna(method='ffill', inplace=True)
     
